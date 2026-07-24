@@ -1,0 +1,20 @@
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos de caché de editores y compiladores
+.vscode/
+.idea/
+*.log
+*.tmp
+
+# Archivos comprimidos de respaldo o exportación accidental
+*.mcpack
+*.mcworld
+*.zip
+
+# Carpetas de pruebas o exportaciones locales del juego
+development_behavior_packs/
+
+node_modules/

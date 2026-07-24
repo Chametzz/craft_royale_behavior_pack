@@ -1,0 +1,17 @@
+{
+  "format_version": "1.20.50",
+  "minecraft:item": {
+    "description": {
+      "identifier": "craft_royale:blue_crown",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:icon": "diamond",
+      "minecraft:display_name": {
+        "value": "Blue crown"
+      }
+    }
+  }
+}

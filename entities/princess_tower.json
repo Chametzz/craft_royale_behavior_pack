@@ -1,0 +1,161 @@
+{
+  "format_version": "1.26.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "craft_royale:princess_tower",
+      "spawn_category": "misc",
+      "is_spawnable": true,
+      "is_summonable": true
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": ["inanimate", "shulker"]
+      },
+      "minecraft:health": {
+        "value": 46,
+        "max": 46
+      },
+      "minecraft:collision_box": {
+        "height": 3,
+        "width": 3
+      },
+      "minecraft:nameable": {
+        "default_trigger": {
+          "event": "craft_royale:remove_teams",
+          "target": "self"
+        },
+        "name_actions": [
+          {
+            "name_filter": "blue",
+            "on_named": {
+              "event": "craft_royale:add_blue_team"
+            }
+          },
+          {
+            "name_filter": "red",
+            "on_named": {
+              "event": "craft_royale:add_red_team"
+            }
+          }
+        ]
+      },
+      "minecraft:persistent": {},
+      "minecraft:physics": {},
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": true
+      },
+      "minecraft:is_collidable": {},
+      "minecraft:movement": {
+        "value": 0.0,
+        "max": 0.0
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:knockback_resistance": {
+        "value": 1.0
+      },
+      "minecraft:navigation.walk": {
+        "using_door_annotation": true
+      },
+      "minecraft:shooter": {
+        "def": "minecraft:arrow"
+      },
+      "minecraft:behavior.ranged_attack": {
+        "priority": 3,
+        "attack_interval_min": 0.8,
+        "attack_interval_max": 0.8,
+        "attack_radius": 12.0
+      }
+    },
+    "component_groups": {
+      "craft_royale:blue_team": {
+        "minecraft:type_family": {
+          "family": ["blue_team"]
+        },
+        "minecraft:variant": {
+          "value": 0
+        },
+        "minecraft:behavior.nearest_attackable_target": {
+          "priority": 2,
+          "must_see": true,
+          "reselect_targets": true,
+          "within_radius": 64,
+          "entity_types": [
+            {
+              "filters": {
+                "AND": [
+                  {
+                    "test": "is_family",
+                    "subject": 1,
+                    "operator": 1,
+                    "value": "blue_team"
+                  }
+                ]
+              },
+              "max_dist": 35
+            }
+          ]
+        }
+      },
+      "craft_royale:red_team": {
+        "minecraft:type_family": {
+          "family": ["red_team"]
+        },
+        "minecraft:variant": {
+          "value": 1
+        },
+        "minecraft:behavior.nearest_attackable_target": {
+          "priority": 2,
+          "must_see": true,
+          "reselect_targets": true,
+          "within_radius": 64,
+          "entity_types": [
+            {
+              "filters": {
+                "AND": [
+                  {
+                    "test": "is_family",
+                    "subject": 1,
+                    "operator": 1,
+                    "value": "red_team"
+                  }
+                ]
+              },
+              "max_dist": 35
+            }
+          ]
+        }
+      }
+    },
+    "events": {
+      "craft_royale:add_blue_team": {
+        "add": {
+          "component_groups": ["craft_royale:blue_team"]
+        }
+      },
+      "craft_royale:add_red_team": {
+        "add": {
+          "component_groups": ["craft_royale:red_team"]
+        }
+      },
+      "craft_royale:remove_blue_team": {
+        "remove": {
+          "component_groups": ["craft_royale:blue_team"]
+        }
+      },
+      "craft_royale:remove_red_team": {
+        "remove": {
+          "component_groups": ["craft_royale:red_team"]
+        }
+      },
+      "craft_royale:remove_teams": {
+        "remove": {
+          "component_groups": [
+            "craft_royale:red_team",
+            "craft_royale:blue_team"
+          ]
+        }
+      }
+    }
+  }
+}

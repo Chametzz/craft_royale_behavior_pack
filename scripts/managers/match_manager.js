@@ -404,8 +404,11 @@ export class MatchManager {
   static spawnKingTower(dimension, teamKey, position, direction = 0) {
     let tower = dimension.spawnEntity("craft_royale:king_tower", position);
     tower.setRotation({ x: 0, y: direction });
+    tower.addTag("in_match");
     tower.addTag(teamKey);
-    tower.triggerEvent(`craft_royale:add_${teamKey}`);
+    tower.setProperty("craft_royale:team", teamKey == "red_team" ? 1 : 0);
+    MatchManager.showHealthEntity(tower);
+    //tower.triggerEvent(`craft_royale:add_${teamKey}`);
   }
 
   /**
@@ -416,8 +419,11 @@ export class MatchManager {
   static spawnPrincessTower(dimension, teamKey, position, direction = 0) {
     let tower = dimension.spawnEntity("craft_royale:princess_tower", position);
     tower.setRotation({ x: 0, y: direction });
+    tower.addTag("in_match");
     tower.addTag(teamKey);
-    tower.triggerEvent(`craft_royale:add_${teamKey}`);
+    tower.setProperty("craft_royale:team", teamKey == "red_team" ? 1 : 0);
+    MatchManager.showHealthEntity(tower);
+    //tower.triggerEvent(`craft_royale:add_${teamKey}`);
   }
 
   /**
@@ -650,6 +656,28 @@ export class MatchManager {
         }
       }
       this.playerDecks.delete(k);
+    }
+  }
+
+  /**
+   *
+   * @param {Entity} entity
+   */
+  static showHealthEntity(entity) {
+    if (entity.hasTag("in_match") && entity.typeId == "minecraft:player")
+      return;
+
+    const health = entity.getComponent("minecraft:health");
+    if (health) {
+      const currentHealth = Math.max(0, Math.ceil(health.currentValue));
+      const maxHealth = Math.ceil(health.effectiveMax);
+      let teamNameTag = "";
+      if (entity.hasTag("blue_team")) {
+        teamNameTag = "§9Blue Team\n";
+      } else if (entity.hasTag("red_team")) {
+        teamNameTag = "§cRed Team\n";
+      }
+      entity.nameTag = `${teamNameTag}:heart: ${currentHealth}/${maxHealth}`;
     }
   }
 }

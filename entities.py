@@ -3,10 +3,9 @@ import os
 
 
 class Team:
-    def __init__(self, key, variant, tags: list[str]):
+    def __init__(self, key, variant):
         self.key = key
         self.variant = variant
-        self.tags = tags
 
 
 entity_folder = "samples/entities"
@@ -16,39 +15,8 @@ teams: list[Team] = [
     Team(
         "blue_team",
         0,
-        [
-            "blue",
-            "Blue",
-            "azul",
-            "Azul",
-            "§9blue",
-            "§9Blue",
-            "§9azul",
-            "§9Azul",
-            "§1blue",
-            "§1Blue",
-            "§1azul",
-            "§1Azul",
-        ],
     ),
-    Team(
-        "red_team",
-        1,
-        [
-            "red",
-            "Red",
-            "rojo",
-            "Rojo",
-            "§cred",
-            "§cRed",
-            "§crojo",
-            "§cRojo",
-            "§4red",
-            "§4Red",
-            "§4rojo",
-            "§4Rojo",
-        ],
-    ),
+    Team("red_team", 1),
 ]
 
 ATTACK_COMPONENTS_TO_REMOVE = [
@@ -60,100 +28,64 @@ ATTACK_COMPONENTS_TO_REMOVE = [
     "minecraft:burns_in_daylight",
     "minecraft:zombify_properties",
     "minecraft:environment_sensor",  # Remueve sensores de luz/clima que las vuelven neutrales
+    "minecraft:cannot_be_attacked",
 ]
 
 team_components = {}
 team_component_groups = {}
 team_events = {}
+team_properties = {}
 
-team_components["minecraft:nameable"] = {
-    "default_trigger": {"event": "craft_royale:remove_teams", "target": "self"},
-    "name_actions": [],
+# team_components["minecraft:type_family"] = {"family": []}
+team_components["minecraft:follow_range"] = {"value": 128, "max": 128}
+team_components["minecraft:damage_sensor"] = {
+    "triggers": [{"on_damage": {"filters": {"any_of": []}}, "deals_damage": "no"}]
 }
-
-team_components["minecraft:follow_range"] = {"value": 64, "max": 64}
+team_components["minecraft:behavior.nearest_attackable_target"] = {
+    "priority": 2,
+    "must_see": True,
+    "reselect_targets": True,
+    "within_radius": 64,
+    "entity_types": [{"filters": {"any_of": []}, "max_dist": 128}],
+}
+team_components["minecraft:nameable"] = {"always_show": True}
+team_properties["craft_royale:team"] = {
+    "type": "int",
+    "default": 0,
+    "client_sync": True,
+    "range": [0, 1],
+}
 
 team_events["craft_royale:remove_teams"] = {"remove": {"component_groups": []}}
 
 for t in teams:
-    team_components["minecraft:nameable"]["name_actions"].extend(
-        [
-            {"name_filter": tag, "on_named": {"event": f"craft_royale:add_{t.key}"}}
-            for tag in t.tags
-        ]
-    )
-    team_component_groups[f"craft_royale:{t.key}"] = {
-        "minecraft:type_family": {"family": [t.key]},
-        "minecraft:behavior.nearest_attackable_target": {
-            "priority": 2,
-            "must_see": True,
-            "reselect_targets": True,
-            "within_radius": 64,
-            "entity_types": [
-                {
-                    "filters": {
-                        "AND": [
-                            {
-                                "test": "is_family",
-                                "subject": 1,
-                                "operator": 1,
-                                "value": t.key,
-                            }
-                        ],
-                    },
-                    "max_dist": 35,
-                }
-            ],
-        },
-        "minecraft:damage_sensor": {
-            "triggers": [
-                {
-                    "on_damage": {
-                        "filters": {
-                            "any_of": [
-                                {
-                                    "all_of": [
-                                        {
-                                            "test": "has_tag",
-                                            "value": t.key,
-                                        },
-                                        {
-                                            "test": "has_tag",
-                                            "subject": "other",
-                                            "value": t.key,
-                                        },
-                                    ]
-                                },
-                                {
-                                    "all_of": [
-                                        {
-                                            "test": "is_family",
-                                            "value": t.key,
-                                        },
-                                        {
-                                            "test": "is_family",
-                                            "subject": "other",
-                                            "value": t.key,
-                                        },
-                                    ]
-                                },
-                            ]
-                        }
-                    },
-                    "deals_damage": "no",
-                }
+    # Evitar fuego amigo
+    team_components["minecraft:damage_sensor"]["triggers"][0]["on_damage"]["filters"][
+        "any_of"
+    ].append(
+        {
+            "all_of": [
+                {"test": "has_tag", "value": t.key},
+                {"test": "has_tag", "subject": "other", "value": t.key},
             ]
-        },
-        "minecraft:variant": {"value": t.variant},
-    }
-    team_events[f"craft_royale:add_{t.key}"] = {
-        "add": {"component_groups": [f"craft_royale:{t.key}"]}
-    }
-    team_events[f"craft_royale:remove_{t.key}"] = {
-        "remove": {"component_groups": [f"craft_royale:{t.key}"]}
-    }
-    team_events["craft_royale:remove_teams"]["remove"]["component_groups"].append(
-        f"craft_royale:{t.key}"
+        }
+    )
+
+    # Para que ataque a otros equipos:
+    team_components["minecraft:behavior.nearest_attackable_target"]["entity_types"][0][
+        "filters"
+    ]["any_of"].extend(
+        [
+            {
+                "all_of": [
+                    {"test": "has_tag", "value": t.key},
+                    {"test": "has_tag", "subject": "other", "value": enemy_team.key},
+                    {"test": "has_tag", "subject": "other", "value": "in_match"},
+                ]
+            }
+            for enemy_team in teams
+            if enemy_team.key != t.key
+        ]
     )
 
 
@@ -203,6 +135,7 @@ def run():
             entity_data: dict = data["minecraft:entity"]
             components: dict = entity_data.setdefault("components", {})
             component_groups: dict = entity_data.setdefault("component_groups", {})
+            properties: dict = entity_data["description"].setdefault("properties", {})
             events: dict = entity_data.setdefault("events", {})
 
             # Limpiar componentes principales
@@ -217,6 +150,7 @@ def run():
             components.update(team_components)
             component_groups.update(team_component_groups)
             events.update(team_events)
+            properties.update(team_properties)
 
             with open(output_file_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)

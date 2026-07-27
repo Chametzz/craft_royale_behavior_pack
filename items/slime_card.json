@@ -2,15 +2,15 @@
   "format_version": "1.20.50",
   "minecraft:item": {
     "description": {
-      "identifier": "craft_royale_card:zombie_card",
+      "identifier": "craft_royale_card:slime_card",
       "menu_category": {
         "category": "items"
       }
     },
     "components": {
-      "minecraft:icon": "zombie_card",
+      "minecraft:icon": "slime_card",
       "minecraft:display_name": {
-        "value": "[5] Zombies"
+        "value": "[4] Slimes"
       },
       "minecraft:max_stack_size": 1
     }

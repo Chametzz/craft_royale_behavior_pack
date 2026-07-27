@@ -11,9 +11,7 @@ system.afterEvents.scriptEventReceive.subscribe((event) => {
       player.removeTag(tag);
     }
     player.addTag("blue_team");
-    player.triggerEvent("craft_royale:remove_teams");
-    player.triggerEvent("craft_royale:add_blue_team");
-    player.runCommand("title @s title §9Equipo Azul");
+    player.runCommand("title @s title §9Team Blue");
   }
   if (event.id == "craft_royale:add_red_team") {
     const player = world
@@ -24,9 +22,7 @@ system.afterEvents.scriptEventReceive.subscribe((event) => {
       player.removeTag(tag);
     }
     player.addTag("red_team");
-    player.triggerEvent("craft_royale:remove_teams");
-    player.triggerEvent("craft_royale:add_red_team");
-    player.runCommand("title @s title §cEquipo Rojo");
+    player.runCommand("title @s title §cTeam Red");
   }
   if (event.id == "craft_royale:remove_teams") {
     const player = world
@@ -36,8 +32,7 @@ system.afterEvents.scriptEventReceive.subscribe((event) => {
     for (const tag of tags) {
       player.removeTag(tag);
     }
-    player.triggerEvent("craft_royale:remove_teams");
-    player.runCommand("title @s subtitle Sin Equipo");
+    player.runCommand("title @s subtitle No Team");
   }
 
   if (event.id == "craft_royale:start_match") {

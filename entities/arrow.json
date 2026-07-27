@@ -4,7 +4,18 @@
     "description": {
       "identifier": "minecraft:arrow",
       "is_summonable": true,
-      "is_spawnable": false
+      "is_spawnable": false,
+      "properties": {
+        "craft_royale:team": {
+          "type": "int",
+          "default": 0,
+          "client_sync": true,
+          "range": [
+            0,
+            1
+          ]
+        }
+      }
     },
     "components": {
       "minecraft:collision_box": {
@@ -69,161 +80,102 @@
         "is_pushable": false,
         "is_pushable_by_piston": true
       },
-      "minecraft:nameable": {
-        "default_trigger": {
-          "event": "craft_royale:remove_teams",
-          "target": "self"
-        },
-        "name_actions": [
+      "minecraft:follow_range": {
+        "value": 128,
+        "max": 128
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
           {
-            "name_filter": "blue",
-            "on_named": {
-              "event": "craft_royale:add_blue_team"
-            }
-          },
-          {
-            "name_filter": "Blue",
-            "on_named": {
-              "event": "craft_royale:add_blue_team"
-            }
-          },
-          {
-            "name_filter": "azul",
-            "on_named": {
-              "event": "craft_royale:add_blue_team"
-            }
-          },
-          {
-            "name_filter": "Azul",
-            "on_named": {
-              "event": "craft_royale:add_blue_team"
-            }
-          },
-          {
-            "name_filter": "§9blue",
-            "on_named": {
-              "event": "craft_royale:add_blue_team"
-            }
-          },
-          {
-            "name_filter": "§9Blue",
-            "on_named": {
-              "event": "craft_royale:add_blue_team"
-            }
-          },
-          {
-            "name_filter": "§9azul",
-            "on_named": {
-              "event": "craft_royale:add_blue_team"
-            }
-          },
-          {
-            "name_filter": "§9Azul",
-            "on_named": {
-              "event": "craft_royale:add_blue_team"
-            }
-          },
-          {
-            "name_filter": "§1blue",
-            "on_named": {
-              "event": "craft_royale:add_blue_team"
-            }
-          },
-          {
-            "name_filter": "§1Blue",
-            "on_named": {
-              "event": "craft_royale:add_blue_team"
-            }
-          },
-          {
-            "name_filter": "§1azul",
-            "on_named": {
-              "event": "craft_royale:add_blue_team"
-            }
-          },
-          {
-            "name_filter": "§1Azul",
-            "on_named": {
-              "event": "craft_royale:add_blue_team"
-            }
-          },
-          {
-            "name_filter": "red",
-            "on_named": {
-              "event": "craft_royale:add_red_team"
-            }
-          },
-          {
-            "name_filter": "Red",
-            "on_named": {
-              "event": "craft_royale:add_red_team"
-            }
-          },
-          {
-            "name_filter": "rojo",
-            "on_named": {
-              "event": "craft_royale:add_red_team"
-            }
-          },
-          {
-            "name_filter": "Rojo",
-            "on_named": {
-              "event": "craft_royale:add_red_team"
-            }
-          },
-          {
-            "name_filter": "§cred",
-            "on_named": {
-              "event": "craft_royale:add_red_team"
-            }
-          },
-          {
-            "name_filter": "§cRed",
-            "on_named": {
-              "event": "craft_royale:add_red_team"
-            }
-          },
-          {
-            "name_filter": "§crojo",
-            "on_named": {
-              "event": "craft_royale:add_red_team"
-            }
-          },
-          {
-            "name_filter": "§cRojo",
-            "on_named": {
-              "event": "craft_royale:add_red_team"
-            }
-          },
-          {
-            "name_filter": "§4red",
-            "on_named": {
-              "event": "craft_royale:add_red_team"
-            }
-          },
-          {
-            "name_filter": "§4Red",
-            "on_named": {
-              "event": "craft_royale:add_red_team"
-            }
-          },
-          {
-            "name_filter": "§4rojo",
-            "on_named": {
-              "event": "craft_royale:add_red_team"
-            }
-          },
-          {
-            "name_filter": "§4Rojo",
-            "on_named": {
-              "event": "craft_royale:add_red_team"
-            }
+            "on_damage": {
+              "filters": {
+                "any_of": [
+                  {
+                    "all_of": [
+                      {
+                        "test": "has_tag",
+                        "value": "blue_team"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "blue_team"
+                      }
+                    ]
+                  },
+                  {
+                    "all_of": [
+                      {
+                        "test": "has_tag",
+                        "value": "red_team"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "red_team"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "deals_damage": "no"
           }
         ]
       },
-      "minecraft:follow_range": {
-        "value": 64,
-        "max": 64
+      "minecraft:behavior.nearest_attackable_target": {
+        "priority": 2,
+        "must_see": true,
+        "reselect_targets": true,
+        "within_radius": 64,
+        "entity_types": [
+          {
+            "filters": {
+              "any_of": [
+                {
+                  "all_of": [
+                    {
+                      "test": "has_tag",
+                      "value": "blue_team"
+                    },
+                    {
+                      "test": "has_tag",
+                      "subject": "other",
+                      "value": "red_team"
+                    },
+                    {
+                      "test": "has_tag",
+                      "subject": "other",
+                      "value": "in_match"
+                    }
+                  ]
+                },
+                {
+                  "all_of": [
+                    {
+                      "test": "has_tag",
+                      "value": "red_team"
+                    },
+                    {
+                      "test": "has_tag",
+                      "subject": "other",
+                      "value": "blue_team"
+                    },
+                    {
+                      "test": "has_tag",
+                      "subject": "other",
+                      "value": "in_match"
+                    }
+                  ]
+                }
+              ]
+            },
+            "max_dist": 128
+          }
+        ]
+      },
+      "minecraft:nameable": {
+        "always_show": true
       }
     },
     "component_groups": {
@@ -325,146 +277,6 @@
           "uncertainty_base": 16,
           "uncertainty_multiplier": 4
         }
-      },
-      "craft_royale:blue_team": {
-        "minecraft:type_family": {
-          "family": [
-            "blue_team"
-          ]
-        },
-        "minecraft:behavior.nearest_attackable_target": {
-          "priority": 2,
-          "must_see": true,
-          "reselect_targets": true,
-          "within_radius": 64,
-          "entity_types": [
-            {
-              "filters": {
-                "AND": [
-                  {
-                    "test": "is_family",
-                    "subject": 1,
-                    "operator": 1,
-                    "value": "blue_team"
-                  }
-                ]
-              },
-              "max_dist": 35
-            }
-          ]
-        },
-        "minecraft:damage_sensor": {
-          "triggers": [
-            {
-              "on_damage": {
-                "filters": {
-                  "any_of": [
-                    {
-                      "all_of": [
-                        {
-                          "test": "has_tag",
-                          "value": "blue_team"
-                        },
-                        {
-                          "test": "has_tag",
-                          "subject": "other",
-                          "value": "blue_team"
-                        }
-                      ]
-                    },
-                    {
-                      "all_of": [
-                        {
-                          "test": "is_family",
-                          "value": "blue_team"
-                        },
-                        {
-                          "test": "is_family",
-                          "subject": "other",
-                          "value": "blue_team"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              },
-              "deals_damage": "no"
-            }
-          ]
-        },
-        "minecraft:variant": {
-          "value": 0
-        }
-      },
-      "craft_royale:red_team": {
-        "minecraft:type_family": {
-          "family": [
-            "red_team"
-          ]
-        },
-        "minecraft:behavior.nearest_attackable_target": {
-          "priority": 2,
-          "must_see": true,
-          "reselect_targets": true,
-          "within_radius": 64,
-          "entity_types": [
-            {
-              "filters": {
-                "AND": [
-                  {
-                    "test": "is_family",
-                    "subject": 1,
-                    "operator": 1,
-                    "value": "red_team"
-                  }
-                ]
-              },
-              "max_dist": 35
-            }
-          ]
-        },
-        "minecraft:damage_sensor": {
-          "triggers": [
-            {
-              "on_damage": {
-                "filters": {
-                  "any_of": [
-                    {
-                      "all_of": [
-                        {
-                          "test": "has_tag",
-                          "value": "red_team"
-                        },
-                        {
-                          "test": "has_tag",
-                          "subject": "other",
-                          "value": "red_team"
-                        }
-                      ]
-                    },
-                    {
-                      "all_of": [
-                        {
-                          "test": "is_family",
-                          "value": "red_team"
-                        },
-                        {
-                          "test": "is_family",
-                          "subject": "other",
-                          "value": "red_team"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              },
-              "deals_damage": "no"
-            }
-          ]
-        },
-        "minecraft:variant": {
-          "value": 1
-        }
       }
     },
     "events": {
@@ -509,38 +321,7 @@
       },
       "craft_royale:remove_teams": {
         "remove": {
-          "component_groups": [
-            "craft_royale:blue_team",
-            "craft_royale:red_team"
-          ]
-        }
-      },
-      "craft_royale:add_blue_team": {
-        "add": {
-          "component_groups": [
-            "craft_royale:blue_team"
-          ]
-        }
-      },
-      "craft_royale:remove_blue_team": {
-        "remove": {
-          "component_groups": [
-            "craft_royale:blue_team"
-          ]
-        }
-      },
-      "craft_royale:add_red_team": {
-        "add": {
-          "component_groups": [
-            "craft_royale:red_team"
-          ]
-        }
-      },
-      "craft_royale:remove_red_team": {
-        "remove": {
-          "component_groups": [
-            "craft_royale:red_team"
-          ]
+          "component_groups": []
         }
       }
     }

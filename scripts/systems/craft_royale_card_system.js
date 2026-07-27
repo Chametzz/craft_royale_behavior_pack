@@ -39,15 +39,18 @@ world.afterEvents.itemUse.subscribe((event) => {
               if (player.hasTag("blue_team")) {
                 entity.nameTag = "§9Blue";
                 entity.addTag("blue_team");
-                entity.triggerEvent("craft_royale:add_blue_team");
+                entity.addTag("in_match");
+                entity.setProperty("craft_royale:team", 0);
               } else if (player.hasTag("red_team")) {
                 entity.nameTag = "§cRed";
                 entity.addTag("red_team");
-                entity.triggerEvent("craft_royale:add_red_team");
+                entity.addTag("in_match");
+                entity.setProperty("craft_royale:team", 1);
               }
             } catch (error) {
               player.sendMessage(`Error al invocar carta: ${error}`);
             }
+            MatchManager.showHealthEntity(entity);
           }
 
           //CAMBIO DE CARTA

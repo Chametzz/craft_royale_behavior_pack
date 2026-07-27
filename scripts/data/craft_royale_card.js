@@ -1,3 +1,5 @@
+import { world } from "@minecraft/server";
+
 export class CraftRoyaleCard {
   /**
    * @param {string} itemId
@@ -24,7 +26,7 @@ export class CraftRoyaleCard {
 export const craftRoyaleCards = [
   //ZombiesCard
   new CraftRoyaleCard(
-    "craft_royale_card:zombies_card",
+    "craft_royale_card:zombie_card",
     5,
     (target, dimension) => {
       const zombies = [];
@@ -40,7 +42,7 @@ export const craftRoyaleCards = [
 
   //SkeletonsCard
   new CraftRoyaleCard(
-    "craft_royale_card:skeletons_card",
+    "craft_royale_card:skeleton_card",
     3,
     (target, dimension) => {
       const skeletons = [];
@@ -81,7 +83,7 @@ export const craftRoyaleCards = [
 
   //Spiders
   new CraftRoyaleCard(
-    "craft_royale_card:spiders_card",
+    "craft_royale_card:spider_card",
     3,
     (target, dimension) => {
       const spiders = [];
@@ -111,12 +113,12 @@ export const craftRoyaleCards = [
 
   //Silverfishes
   new CraftRoyaleCard(
-    "craft_royale_card:silverfishes_card",
+    "craft_royale_card:silverfish_card",
     3,
     (target, dimension) => {
       const silverfishes = [];
 
-      for (let i = 0; i < 16; i++) {
+      for (let i = 0; i < 30; i++) {
         const silverfish = dimension.spawnEntity(
           "minecraft:silverfish",
           target,
@@ -130,7 +132,7 @@ export const craftRoyaleCards = [
 
   //Snow Golems
   new CraftRoyaleCard(
-    "craft_royale_card:snow_golems_card",
+    "craft_royale_card:snow_golem_card",
     1,
     (target, dimension) => {
       const snowGolems = [];
@@ -154,16 +156,20 @@ export const craftRoyaleCards = [
   ),
 
   //Zap
-  new CraftRoyaleCard("craft_royale_card:zap_card", 2, (target, dimension) => {
-    return [
-      dimension.spawnEntity("minecraft:lightning_bolt", target),
-      dimension.spawnEntity("minecraft:lightning_bolt", target),
-    ];
-  }),
+  new CraftRoyaleCard(
+    "craft_royale_card:lightning_bolt_card",
+    2,
+    (target, dimension) => {
+      return [
+        dimension.spawnEntity("minecraft:lightning_bolt", target),
+        dimension.spawnEntity("minecraft:lightning_bolt", target),
+      ];
+    },
+  ),
 
   //Arrows
   new CraftRoyaleCard(
-    "craft_royale_card:arrows_card",
+    "craft_royale_card:arrow_card",
     3,
     (target, dimension) => {
       const arrows = [];
@@ -195,9 +201,82 @@ export const craftRoyaleCards = [
     return [
       dimension.spawnEntity("minecraft:vex", {
         x: target.x,
-        y: 4,
+        y: target.y + 4,
         z: target.z,
       }),
     ];
   }),
+
+  //Endermites
+  new CraftRoyaleCard(
+    "craft_royale_card:endermite_card",
+    1,
+    (target, dimension) => {
+      return Array.from({ length: 4 }, (_, i) =>
+        dimension.spawnEntity("minecraft:endermite", target),
+      );
+    },
+  ),
+
+  //Slimes
+  new CraftRoyaleCard(
+    "craft_royale_card:slime_card",
+    4,
+    (target, dimension) => {
+      return Array.from({ length: 2 }, (_, i) => {
+        const slime = dimension.spawnEntity("minecraft:slime", target);
+        const sizeComponent = slime.getComponent("minecraft:slime_size");
+        if (sizeComponent) {
+          sizeComponent.value = 2;
+        }
+        return slime;
+      });
+    },
+  ),
+
+  //Magma Cube
+  new CraftRoyaleCard(
+    "craft_royale_card:magma_cube_card",
+    4,
+    (target, dimension) => {
+      return Array.from({ length: 1 }, (_, i) => {
+        const magma = dimension.spawnEntity("minecraft:magma_cube", target);
+        const sizeComponent = magma.getComponent("minecraft:slime_size");
+        if (sizeComponent) {
+          sizeComponent.value = 2;
+        }
+        return magma;
+      });
+    },
+  ),
+
+  //Ghasts
+  new CraftRoyaleCard(
+    "craft_royale_card:ghast_card",
+    4,
+    (target, dimension) => {
+      return Array.from({ length: 2 }, (_, i) =>
+        dimension.spawnEntity("minecraft:ghast", {
+          x: target.x,
+          y: target.y + 4,
+          z: target.z,
+        }),
+      );
+    },
+  ),
+
+  //Ravager
+  new CraftRoyaleCard(
+    "craft_royale_card:ravager_card",
+    4,
+    (target, dimension) => {
+      const ravager = dimension.spawnEntity("minecraft:ravager", target);
+      const pillager = dimension.spawnEntity("minecraft:pillager", target);
+      const rideable = ravager.getComponent("minecraft:rideable");
+      if (rideable) {
+        rideable.addRider(pillager);
+      }
+      return [ravager, pillager];
+    },
+  ),
 ];

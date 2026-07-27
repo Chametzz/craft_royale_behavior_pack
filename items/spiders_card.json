@@ -2,16 +2,17 @@
   "format_version": "1.20.50",
   "minecraft:item": {
     "description": {
-      "identifier": "craft_royale:blue_crown",
+      "identifier": "craft_royale_card:spiders_card",
       "menu_category": {
         "category": "items"
       }
     },
     "components": {
-      "minecraft:icon": "diamond",
+      "minecraft:icon": "spider_card",
       "minecraft:display_name": {
-        "value": "Blue crown"
-      }
+        "value": "[3] Spiders"
+      },
+      "minecraft:max_stack_size": 1
     }
   }
 }

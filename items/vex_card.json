@@ -2,15 +2,15 @@
   "format_version": "1.20.50",
   "minecraft:item": {
     "description": {
-      "identifier": "craft_royale_card:iron_golem_card",
+      "identifier": "craft_royale_card:vex_card",
       "menu_category": {
         "category": "items"
       }
     },
     "components": {
-      "minecraft:icon": "iron_golem_card",
+      "minecraft:icon": "vex_card",
       "minecraft:display_name": {
-        "value": "[7] Iron Golem"
+        "value": "[3] Vex"
       },
       "minecraft:max_stack_size": 1
     }

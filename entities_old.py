@@ -59,11 +59,12 @@ ATTACK_COMPONENTS_TO_REMOVE = [
     "minecraft:behavior.owner_hurt_target",
     "minecraft:burns_in_daylight",
     "minecraft:zombify_properties",
-    "minecraft:environment_sensor",  # Remueve sensores de luz/clima que las vuelven neutrales
 ]
 
 team_components = {}
+
 team_component_groups = {}
+
 team_events = {}
 
 team_components["minecraft:nameable"] = {
@@ -157,22 +158,6 @@ for t in teams:
     )
 
 
-def clean_components(comp_dict: dict):
-    """Limpia componentes indeseados e inhabilita el temporizador de calma en 'minecraft:angry'."""
-    # 1. Eliminar componentes de ataque u hostilidad vanilla
-    for comp in ATTACK_COMPONENTS_TO_REMOVE:
-        comp_dict.pop(comp, None)
-
-    # 2. Desactivar la des-agresividad en 'minecraft:angry'
-    if "minecraft:angry" in comp_dict and isinstance(
-        comp_dict["minecraft:angry"], dict
-    ):
-        angry_data = comp_dict["minecraft:angry"]
-        angry_data.pop("calm_event", None)
-        angry_data.pop("duration", None)
-        angry_data.pop("duration_delta", None)
-
-
 # procesar
 def run():
     os.makedirs(target_folder, exist_ok=True)
@@ -202,18 +187,13 @@ def run():
 
             entity_data: dict = data["minecraft:entity"]
             components: dict = entity_data.setdefault("components", {})
+
+            for comp in ATTACK_COMPONENTS_TO_REMOVE:
+                components.pop(comp, None)
+
             component_groups: dict = entity_data.setdefault("component_groups", {})
             events: dict = entity_data.setdefault("events", {})
 
-            # Limpiar componentes principales
-            clean_components(components)
-
-            # Limpiar dentro de TODOS los component_groups (donde vivían las conductas de la araña)
-            for group in component_groups.values():
-                if isinstance(group, dict):
-                    clean_components(group)
-
-            # Inyectar configuraciones de equipos
             components.update(team_components)
             component_groups.update(team_component_groups)
             events.update(team_events)
@@ -224,7 +204,7 @@ def run():
             print(f"Entidad generada: {output_file_path}")
         except Exception as e:  # noqa: BLE001
             print(f"Error al procesar '{file_name}': {e}")
-    print("¡Proceso finalizado con éxito!")
+    print("¡Proceso finalizado con éxito")
 
 
 run()

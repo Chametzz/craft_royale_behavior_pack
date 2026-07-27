@@ -2,25 +2,72 @@
   "format_version": "1.26.0",
   "minecraft:entity": {
     "description": {
-      "identifier": "craft_royale:princess_tower",
-      "spawn_category": "misc",
-      "is_spawnable": true,
-      "is_summonable": true
+      "identifier": "minecraft:arrow",
+      "is_summonable": true,
+      "is_spawnable": false
     },
     "components": {
-      "minecraft:type_family": {
-        "family": [
-          "inanimate",
-          "shulker"
+      "minecraft:collision_box": {
+        "height": 0.25,
+        "width": 0.25
+      },
+      "minecraft:conditional_bandwidth_optimization": {
+        "default_values": {
+          "max_dropped_ticks": 7,
+          "max_optimized_distance": 80.0,
+          "use_motion_prediction_hints": true
+        }
+      },
+      "minecraft:dimension_bound": {},
+      "minecraft:hurt_on_condition": {
+        "damage_conditions": [
+          {
+            "cause": "lava",
+            "damage_per_tick": 4,
+            "filters": {
+              "operator": "==",
+              "test": "in_lava",
+              "subject": "self",
+              "value": true
+            }
+          }
         ]
       },
-      "minecraft:health": {
-        "value": 46,
-        "max": 46
+      "minecraft:physics": {},
+      "minecraft:projectile": {
+        "anchor": 1,
+        "gravity": 0.05,
+        "power": 1.6,
+        "hit_sound": "bow.hit",
+        "on_hit": {
+          "arrow_effect": {
+            "apply_effect_to_blocking_targets": false
+          },
+          "impact_damage": {
+            "damage": [
+              1,
+              4
+            ],
+            "knockback": true,
+            "destroy_on_hit": true,
+            "semi_random_diff_damage": false
+          },
+          "stick_in_ground": {
+            "shake_time": 0.35
+          }
+        },
+        "offset": [
+          0,
+          -0.1,
+          0
+        ],
+        "should_bounce": true,
+        "uncertainty_base": 16,
+        "uncertainty_multiplier": 4
       },
-      "minecraft:collision_box": {
-        "height": 3,
-        "width": 3
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": true
       },
       "minecraft:nameable": {
         "default_trigger": {
@@ -174,39 +221,111 @@
           }
         ]
       },
-      "minecraft:persistent": {},
-      "minecraft:physics": {},
-      "minecraft:pushable": {
-        "is_pushable": false,
-        "is_pushable_by_piston": true
-      },
-      "minecraft:is_collidable": {},
-      "minecraft:movement": {
-        "value": 0.0,
-        "max": 0.0
-      },
-      "minecraft:movement.basic": {},
-      "minecraft:knockback_resistance": {
-        "value": 1.0
-      },
-      "minecraft:navigation.walk": {
-        "using_door_annotation": true
-      },
-      "minecraft:shooter": {
-        "def": "minecraft:arrow"
-      },
-      "minecraft:behavior.ranged_attack": {
-        "priority": 3,
-        "attack_interval_min": 0.8,
-        "attack_interval_max": 0.8,
-        "attack_radius": 12.0
-      },
       "minecraft:follow_range": {
         "value": 64,
         "max": 64
       }
     },
     "component_groups": {
+      "minecraft:player_arrow": {
+        "minecraft:projectile": {
+          "anchor": 1,
+          "gravity": 0.05,
+          "power": 5.0,
+          "hit_sound": "bow.hit",
+          "on_hit": {
+            "arrow_effect": {
+              "apply_effect_to_blocking_targets": false
+            },
+            "impact_damage": {
+              "damage": 1,
+              "knockback": true,
+              "power_multiplier": 0.97,
+              "destroy_on_hit": true,
+              "semi_random_diff_damage": true,
+              "max_critical_damage": 10,
+              "min_critical_damage": 9
+            },
+            "stick_in_ground": {
+              "shake_time": 0.35
+            }
+          },
+          "offset": [
+            0,
+            -0.1,
+            0
+          ],
+          "should_bounce": true,
+          "uncertainty_base": 1,
+          "uncertainty_multiplier": 0
+        }
+      },
+      "minecraft:hard_arrow": {
+        "minecraft:projectile": {
+          "anchor": 1,
+          "gravity": 0.05,
+          "power": 1.6,
+          "hit_sound": "bow.hit",
+          "on_hit": {
+            "arrow_effect": {
+              "apply_effect_to_blocking_targets": false
+            },
+            "impact_damage": {
+              "damage": [
+                1,
+                5
+              ],
+              "knockback": true,
+              "destroy_on_hit": true,
+              "semi_random_diff_damage": false
+            },
+            "stick_in_ground": {
+              "shake_time": 0.35
+            }
+          },
+          "offset": [
+            0,
+            -0.1,
+            0
+          ],
+          "should_bounce": true,
+          "uncertainty_base": 16,
+          "uncertainty_multiplier": 4
+        }
+      },
+      "minecraft:pillager_arrow": {
+        "minecraft:projectile": {
+          "anchor": 1,
+          "gravity": 0.05,
+          "power": 1.6,
+          "hit_sound": "bow.hit",
+          "on_hit": {
+            "arrow_effect": {
+              "apply_effect_to_blocking_targets": false
+            },
+            "impact_damage": {
+              "damage": [
+                3,
+                6
+              ],
+              "knockback": true,
+              "destroy_on_hit": true,
+              "semi_random_diff_damage": false
+            },
+            "stick_in_ground": {
+              "shake_time": 0.35
+            }
+          },
+          "offset": [
+            0,
+            -0.1,
+            0
+          ],
+          "should_bounce": true,
+          "uncertainty_base": 16,
+          "uncertainty_multiplier": 4
+        }
+      },
       "craft_royale:blue_team": {
         "minecraft:type_family": {
           "family": [
@@ -349,8 +468,62 @@
       }
     },
     "events": {
+      "minecraft:entity_spawned": {
+        "sequence": [
+          {
+            "filters": {
+              "test": "is_difficulty",
+              "value": "hard"
+            },
+            "add": {
+              "component_groups": [
+                "minecraft:hard_arrow"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "subject": "other",
+              "test": "is_family",
+              "value": "player"
+            },
+            "add": {
+              "component_groups": [
+                "minecraft:player_arrow"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "subject": "other",
+              "test": "is_family",
+              "value": "pillager"
+            },
+            "add": {
+              "component_groups": [
+                "minecraft:pillager_arrow"
+              ]
+            }
+          }
+        ]
+      },
+      "craft_royale:remove_teams": {
+        "remove": {
+          "component_groups": [
+            "craft_royale:blue_team",
+            "craft_royale:red_team"
+          ]
+        }
+      },
       "craft_royale:add_blue_team": {
         "add": {
+          "component_groups": [
+            "craft_royale:blue_team"
+          ]
+        }
+      },
+      "craft_royale:remove_blue_team": {
+        "remove": {
           "component_groups": [
             "craft_royale:blue_team"
           ]
@@ -363,24 +536,9 @@
           ]
         }
       },
-      "craft_royale:remove_blue_team": {
-        "remove": {
-          "component_groups": [
-            "craft_royale:blue_team"
-          ]
-        }
-      },
       "craft_royale:remove_red_team": {
         "remove": {
           "component_groups": [
-            "craft_royale:red_team"
-          ]
-        }
-      },
-      "craft_royale:remove_teams": {
-        "remove": {
-          "component_groups": [
-            "craft_royale:blue_team",
             "craft_royale:red_team"
           ]
         }

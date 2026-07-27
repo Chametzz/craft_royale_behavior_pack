@@ -2,25 +2,24 @@
   "format_version": "1.26.0",
   "minecraft:entity": {
     "description": {
-      "identifier": "craft_royale:princess_tower",
-      "spawn_category": "misc",
-      "is_spawnable": true,
-      "is_summonable": true
+      "identifier": "minecraft:lightning_bolt",
+      "is_experimental": false,
+      "is_summonable": true,
+      "is_spawnable": false,
+      "spawn_category": "misc"
     },
     "components": {
+      "minecraft:conditional_bandwidth_optimization": {
+        "default_values": {
+          "max_dropped_ticks": 10,
+          "max_optimized_distance": 80.0,
+          "use_motion_prediction_hints": true
+        }
+      },
       "minecraft:type_family": {
         "family": [
-          "inanimate",
-          "shulker"
+          "lightning"
         ]
-      },
-      "minecraft:health": {
-        "value": 46,
-        "max": 46
-      },
-      "minecraft:collision_box": {
-        "height": 3,
-        "width": 3
       },
       "minecraft:nameable": {
         "default_trigger": {
@@ -174,36 +173,47 @@
           }
         ]
       },
-      "minecraft:persistent": {},
-      "minecraft:physics": {},
-      "minecraft:pushable": {
-        "is_pushable": false,
-        "is_pushable_by_piston": true
-      },
-      "minecraft:is_collidable": {},
-      "minecraft:movement": {
-        "value": 0.0,
-        "max": 0.0
-      },
-      "minecraft:movement.basic": {},
-      "minecraft:knockback_resistance": {
-        "value": 1.0
-      },
-      "minecraft:navigation.walk": {
-        "using_door_annotation": true
-      },
-      "minecraft:shooter": {
-        "def": "minecraft:arrow"
-      },
-      "minecraft:behavior.ranged_attack": {
-        "priority": 3,
-        "attack_interval_min": 0.8,
-        "attack_interval_max": 0.8,
-        "attack_radius": 12.0
-      },
       "minecraft:follow_range": {
         "value": 64,
         "max": 64
+      }
+    },
+    "events": {
+      "craft_royale:remove_teams": {
+        "remove": {
+          "component_groups": [
+            "craft_royale:blue_team",
+            "craft_royale:red_team"
+          ]
+        }
+      },
+      "craft_royale:add_blue_team": {
+        "add": {
+          "component_groups": [
+            "craft_royale:blue_team"
+          ]
+        }
+      },
+      "craft_royale:remove_blue_team": {
+        "remove": {
+          "component_groups": [
+            "craft_royale:blue_team"
+          ]
+        }
+      },
+      "craft_royale:add_red_team": {
+        "add": {
+          "component_groups": [
+            "craft_royale:red_team"
+          ]
+        }
+      },
+      "craft_royale:remove_red_team": {
+        "remove": {
+          "component_groups": [
+            "craft_royale:red_team"
+          ]
+        }
       }
     },
     "component_groups": {
@@ -345,44 +355,6 @@
         },
         "minecraft:variant": {
           "value": 1
-        }
-      }
-    },
-    "events": {
-      "craft_royale:add_blue_team": {
-        "add": {
-          "component_groups": [
-            "craft_royale:blue_team"
-          ]
-        }
-      },
-      "craft_royale:add_red_team": {
-        "add": {
-          "component_groups": [
-            "craft_royale:red_team"
-          ]
-        }
-      },
-      "craft_royale:remove_blue_team": {
-        "remove": {
-          "component_groups": [
-            "craft_royale:blue_team"
-          ]
-        }
-      },
-      "craft_royale:remove_red_team": {
-        "remove": {
-          "component_groups": [
-            "craft_royale:red_team"
-          ]
-        }
-      },
-      "craft_royale:remove_teams": {
-        "remove": {
-          "component_groups": [
-            "craft_royale:blue_team",
-            "craft_royale:red_team"
-          ]
         }
       }
     }

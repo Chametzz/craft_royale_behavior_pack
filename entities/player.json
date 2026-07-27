@@ -344,11 +344,89 @@
       "craft_royale:blue_team": {
         "minecraft:type_family": {
           "family": ["player", "light", "blue_team"]
+        },
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "on_damage": {
+                "filters": {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "blue_team"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "is_family",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "is_family",
+                          "subject": "other",
+                          "value": "blue_team"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "deals_damage": "no"
+            }
+          ]
         }
       },
       "craft_royale:red_team": {
         "minecraft:type_family": {
           "family": ["player", "light", "red_team"]
+        },
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "on_damage": {
+                "filters": {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "red_team"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "is_family",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "is_family",
+                          "subject": "other",
+                          "value": "red_team"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "deals_damage": "no"
+            }
+          ]
         }
       },
       "minecraft:add_raid_omen": {
@@ -400,7 +478,7 @@
           "component_groups": ["craft_royale:red_team"]
         }
       },
-      "craft_royale:clear_team": {
+      "craft_royale:remove_teams": {
         "remove": {
           "component_groups": [
             "craft_royale:blue_team",

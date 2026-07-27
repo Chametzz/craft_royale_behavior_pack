@@ -64,7 +64,6 @@
         "suffocate_time": 0,
         "total_supply": 15
       },
-      "minecraft:burns_in_daylight": {},
       "minecraft:can_climb": {},
       "minecraft:collision_box": {
         "height": 1.9,
@@ -73,31 +72,6 @@
       "minecraft:conditional_bandwidth_optimization": {},
       "minecraft:despawn": {
         "despawn_from_distance": {}
-      },
-      "minecraft:environment_sensor": {
-        "triggers": [
-          {
-            "event": "minecraft:melee_mode",
-            "filters": {
-              "test": "is_underwater"
-            }
-          },
-          {
-            "event": "minecraft:melee_mode",
-            "filters": {
-              "test": "has_ranged_weapon",
-              "value": false
-            }
-          },
-          {
-            "event": "got_in_powder_snow",
-            "filters": {
-              "subject": "self",
-              "test": "in_block",
-              "value": "minecraft:powder_snow"
-            }
-          }
-        ]
       },
       "minecraft:equip_item": {
         "excluded_items": [
@@ -555,6 +529,10 @@
           "monster",
           "mob"
         ]
+      },
+      "minecraft:follow_range": {
+        "value": 64,
+        "max": 64
       }
     },
     "component_groups": {
@@ -567,53 +545,8 @@
           "transformation_sound": "convert_to_stray"
         }
       },
-      "got_out_of_powder_snow_environment_sensor": {
-        "minecraft:environment_sensor": {
-          "triggers": [
-            {
-              "event": "minecraft:melee_mode",
-              "filters": {
-                "test": "is_underwater"
-              }
-            },
-            {
-              "event": "minecraft:melee_mode",
-              "filters": {
-                "test": "has_ranged_weapon",
-                "value": false
-              }
-            },
-            {
-              "event": "minecraft:ranged_mode",
-              "filters": {
-                "all_of": [
-                  {
-                    "test": "in_water",
-                    "value": false
-                  },
-                  {
-                    "test": "has_ranged_weapon"
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      },
+      "got_out_of_powder_snow_environment_sensor": {},
       "in_powder_snow": {
-        "minecraft:environment_sensor": {
-          "triggers": [
-            {
-              "event": "got_out_of_powder_snow",
-              "filters": {
-                "operator": "not",
-                "test": "in_block",
-                "subject": "self",
-                "value": "minecraft:powder_snow"
-              }
-            }
-          ]
-        },
         "minecraft:is_shaking": {},
         "minecraft:timer": {
           "looping": false,
@@ -643,31 +576,6 @@
           "speed_multiplier": 1.25,
           "track_target": true,
           "priority": 4
-        },
-        "minecraft:environment_sensor": {
-          "triggers": [
-            {
-              "event": "minecraft:ranged_mode",
-              "filters": {
-                "all_of": [
-                  {
-                    "test": "in_water",
-                    "value": false
-                  },
-                  {
-                    "test": "has_ranged_weapon"
-                  }
-                ]
-              }
-            },
-            {
-              "event": "got_in_powder_snow",
-              "filters": {
-                "test": "in_block",
-                "value": "minecraft:powder_snow"
-              }
-            }
-          ]
         }
       },
       "minecraft:ranged_attack": {
@@ -676,38 +584,6 @@
           "attack_interval_min": 3.0,
           "attack_radius": 15.0,
           "priority": 0
-        },
-        "minecraft:environment_sensor": {
-          "triggers": [
-            {
-              "event": "minecraft:melee_mode",
-              "filters": {
-                "test": "is_underwater"
-              }
-            },
-            {
-              "event": "minecraft:melee_mode",
-              "filters": {
-                "test": "has_ranged_weapon",
-                "value": false
-              }
-            },
-            {
-              "event": "got_in_powder_snow",
-              "filters": {
-                "subject": "self",
-                "test": "in_block",
-                "value": "minecraft:powder_snow"
-              }
-            },
-            {
-              "event": "minecraft:switch_to_hard_ranged",
-              "filters": {
-                "test": "is_difficulty",
-                "value": "hard"
-              }
-            }
-          ]
         },
         "minecraft:shooter": {
           "def": "minecraft:arrow",
@@ -720,39 +596,6 @@
           "attack_interval_min": 2.0,
           "attack_radius": 15.0,
           "priority": 0
-        },
-        "minecraft:environment_sensor": {
-          "triggers": [
-            {
-              "event": "minecraft:melee_mode",
-              "filters": {
-                "test": "is_underwater"
-              }
-            },
-            {
-              "event": "minecraft:melee_mode",
-              "filters": {
-                "test": "has_ranged_weapon",
-                "value": false
-              }
-            },
-            {
-              "event": "got_in_powder_snow",
-              "filters": {
-                "subject": "self",
-                "test": "in_block",
-                "value": "minecraft:powder_snow"
-              }
-            },
-            {
-              "event": "minecraft:switch_to_normal_ranged",
-              "filters": {
-                "test": "is_difficulty",
-                "operator": "!=",
-                "value": "hard"
-              }
-            }
-          ]
         },
         "minecraft:shooter": {
           "def": "minecraft:arrow",
@@ -785,6 +628,48 @@
               "max_dist": 35
             }
           ]
+        },
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "on_damage": {
+                "filters": {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "blue_team"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "is_family",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "is_family",
+                          "subject": "other",
+                          "value": "blue_team"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "deals_damage": "no"
+            }
+          ]
+        },
+        "minecraft:variant": {
+          "value": 0
         }
       },
       "craft_royale:red_team": {
@@ -813,6 +698,48 @@
               "max_dist": 35
             }
           ]
+        },
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "on_damage": {
+                "filters": {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "red_team"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "is_family",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "is_family",
+                          "subject": "other",
+                          "value": "red_team"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "deals_damage": "no"
+            }
+          ]
+        },
+        "minecraft:variant": {
+          "value": 1
         }
       }
     },

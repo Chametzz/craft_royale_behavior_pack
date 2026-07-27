@@ -2,26 +2,145 @@
   "format_version": "1.26.0",
   "minecraft:entity": {
     "description": {
-      "identifier": "craft_royale:princess_tower",
-      "spawn_category": "misc",
-      "is_spawnable": true,
-      "is_summonable": true
+      "identifier": "minecraft:snow_golem",
+      "is_summonable": true,
+      "is_spawnable": true
     },
     "components": {
-      "minecraft:type_family": {
-        "family": [
-          "inanimate",
-          "shulker"
-        ]
+      "minecraft:attack": {
+        "damage": 2
+      },
+      "minecraft:balloonable": {},
+      "minecraft:behavior.look_at_player": {
+        "look_distance": 6,
+        "priority": 3
+      },
+      "minecraft:behavior.random_look_around": {
+        "priority": 4
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 2,
+        "speed_multiplier": 1
+      },
+      "minecraft:behavior.ranged_attack": {
+        "attack_interval": 1,
+        "attack_radius": 10,
+        "priority": 1,
+        "speed_multiplier": 1.25
+      },
+      "minecraft:breathable": {
+        "suffocate_time": 0,
+        "total_supply": 15
+      },
+      "minecraft:can_climb": {},
+      "minecraft:collision_box": {
+        "height": 1.8,
+        "width": 0.4
+      },
+      "minecraft:conditional_bandwidth_optimization": {},
+      "minecraft:damage_sensor": {
+        "triggers": {
+          "cause": "fall",
+          "deals_damage": "no"
+        }
       },
       "minecraft:health": {
-        "value": 46,
-        "max": 46
+        "max": 4,
+        "value": 4
       },
-      "minecraft:collision_box": {
-        "height": 3,
-        "width": 3
+      "minecraft:hurt_on_condition": {
+        "damage_conditions": [
+          {
+            "cause": "lava",
+            "damage_per_tick": 4,
+            "filters": {
+              "operator": "==",
+              "test": "in_lava",
+              "subject": "self",
+              "value": true
+            }
+          },
+          {
+            "cause": "temperature",
+            "damage_per_tick": 1,
+            "filters": {
+              "all_of": [
+                {
+                  "operator": ">",
+                  "test": "is_temperature_value",
+                  "value": 1.0
+                },
+                {
+                  "operator": "!=",
+                  "test": "has_component",
+                  "subject": "self",
+                  "value": "minecraft:effect.fire_resistance"
+                }
+              ]
+            }
+          },
+          {
+            "cause": "drowning",
+            "damage_per_tick": 1,
+            "filters": {
+              "operator": "==",
+              "test": "in_contact_with_water",
+              "value": true
+            }
+          }
+        ]
       },
+      "minecraft:interact": {
+        "interactions": [
+          {
+            "play_sounds": "shear",
+            "cooldown": 2.5,
+            "hurt_item": 1,
+            "spawn_items": {
+              "table": "loot_tables/entities/snow_golem_shear.json"
+            },
+            "on_interact": {
+              "event": "minecraft:on_sheared",
+              "filters": {
+                "all_of": [
+                  {
+                    "domain": "hand",
+                    "subject": "other",
+                    "test": "has_equipment",
+                    "value": "shears"
+                  },
+                  {
+                    "subject": "other",
+                    "test": "is_family",
+                    "value": "player"
+                  },
+                  {
+                    "operator": "!=",
+                    "test": "has_component",
+                    "value": "minecraft:is_sheared"
+                  }
+                ]
+              },
+              "target": "self"
+            },
+            "interact_text": "action.interact.shear",
+            "swing": true,
+            "vibration": "shear",
+            "use_item": false
+          }
+        ]
+      },
+      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:jump.static": {},
+      "minecraft:leashable": {},
+      "minecraft:leashable_to": {},
+      "minecraft:loot": {
+        "table": "loot_tables/entities/snowman.json"
+      },
+      "minecraft:movement": {
+        "value": 0.2
+      },
+      "minecraft:movement.basic": {},
       "minecraft:nameable": {
         "default_trigger": {
           "event": "craft_royale:remove_teams",
@@ -174,32 +293,31 @@
           }
         ]
       },
+      "minecraft:navigation.walk": {
+        "avoid_water": true
+      },
       "minecraft:persistent": {},
       "minecraft:physics": {},
       "minecraft:pushable": {
-        "is_pushable": false,
+        "is_pushable": true,
         "is_pushable_by_piston": true
       },
-      "minecraft:is_collidable": {},
-      "minecraft:movement": {
-        "value": 0.0,
-        "max": 0.0
-      },
-      "minecraft:movement.basic": {},
-      "minecraft:knockback_resistance": {
-        "value": 1.0
-      },
-      "minecraft:navigation.walk": {
-        "using_door_annotation": true
-      },
       "minecraft:shooter": {
-        "def": "minecraft:arrow"
+        "def": "minecraft:snowball"
       },
-      "minecraft:behavior.ranged_attack": {
-        "priority": 3,
-        "attack_interval_min": 0.8,
-        "attack_interval_max": 0.8,
-        "attack_radius": 12.0
+      "minecraft:trail": {
+        "block_type": "minecraft:snow_layer",
+        "spawn_filter": {
+          "operator": "<",
+          "test": "is_temperature_value",
+          "value": 0.81
+        }
+      },
+      "minecraft:type_family": {
+        "family": [
+          "snowgolem",
+          "mob"
+        ]
       },
       "minecraft:follow_range": {
         "value": 64,
@@ -207,6 +325,9 @@
       }
     },
     "component_groups": {
+      "minecraft:snowman_sheared": {
+        "minecraft:is_sheared": {}
+      },
       "craft_royale:blue_team": {
         "minecraft:type_family": {
           "family": [
@@ -349,8 +470,31 @@
       }
     },
     "events": {
+      "minecraft:on_sheared": {
+        "add": {
+          "component_groups": [
+            "minecraft:snowman_sheared"
+          ]
+        },
+        "remove": {}
+      },
+      "craft_royale:remove_teams": {
+        "remove": {
+          "component_groups": [
+            "craft_royale:blue_team",
+            "craft_royale:red_team"
+          ]
+        }
+      },
       "craft_royale:add_blue_team": {
         "add": {
+          "component_groups": [
+            "craft_royale:blue_team"
+          ]
+        }
+      },
+      "craft_royale:remove_blue_team": {
+        "remove": {
           "component_groups": [
             "craft_royale:blue_team"
           ]
@@ -363,24 +507,9 @@
           ]
         }
       },
-      "craft_royale:remove_blue_team": {
-        "remove": {
-          "component_groups": [
-            "craft_royale:blue_team"
-          ]
-        }
-      },
       "craft_royale:remove_red_team": {
         "remove": {
           "component_groups": [
-            "craft_royale:red_team"
-          ]
-        }
-      },
-      "craft_royale:remove_teams": {
-        "remove": {
-          "component_groups": [
-            "craft_royale:blue_team",
             "craft_royale:red_team"
           ]
         }

@@ -2,16 +2,17 @@
   "format_version": "1.20.50",
   "minecraft:item": {
     "description": {
-      "identifier": "craft_royale:red_crown",
+      "identifier": "craft_royale_card:creeper_card",
       "menu_category": {
         "category": "items"
       }
     },
     "components": {
-      "minecraft:icon": "apple",
+      "minecraft:icon": "creeper_card",
       "minecraft:display_name": {
-        "value": "Red crown"
-      }
+        "value": "[1] Creeper"
+      },
+      "minecraft:max_stack_size": 1
     }
   }
 }

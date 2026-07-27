@@ -1,78 +1,44 @@
 {
-  "format_version": "1.26.30",
+  "format_version": "1.26.10",
   "minecraft:entity": {
     "description": {
-      "identifier": "minecraft:skeleton_horse",
-      "spawn_category": "creature",
+      "identifier": "minecraft:enderman",
+      "spawn_category": "monster",
       "is_spawnable": true,
       "is_summonable": true
     },
     "component_groups": {
-      "minecraft:skeleton_horse_r5_upgrade": {
-        "minecraft:rideable": {}
-      },
-      "minecraft:skeleton_horse_baby": {
-        "minecraft:is_baby": {},
-        "minecraft:behavior.follow_parent": {
-          "priority": 4,
-          "speed_multiplier": 1.0
+      "minecraft:enderman_calm": {
+        "minecraft:on_target_acquired": {
+          "event": "minecraft:become_angry",
+          "target": "self"
         },
-        "minecraft:scale": {
-          "value": 0.5
-        },
-        "minecraft:collision_box": {
-          "width": 1.96,
-          "height": 2.24
+        "minecraft:movement": {
+          "value": 0.3
         }
       },
-      "minecraft:skeleton_horse_adult": {
-        "minecraft:experience_reward": {
-          "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+      "minecraft:enderman_angry": {
+        "minecraft:angry": {},
+        "minecraft:movement": {
+          "value": 0.45
         },
-        "minecraft:loot": {
-          "table": "loot_tables/entities/skeleton_horse.json"
-        },
-        "minecraft:collision_box": {
-          "width": 1.4,
-          "height": 1.6
-        },
-        "minecraft:leashable_to": {},
-        "minecraft:rideable": {
-          "seat_count": 1,
-          "family_types": [
-            "player",
-            "skeleton",
-            "zombie"
-          ],
-          "interact_text": "action.interact.ride.horse",
-          "seats": {
-            "position": [
-              0.0,
-              1.1,
-              -0.2
-            ]
-          }
-        }
-      },
-      "minecraft:skeleton_trap": {
-        "minecraft:behavior.skeleton_horse_trap": {
-          "within_radius": 10.0,
-          "duration": 900.0,
+        "minecraft:behavior.melee_box_attack": {
           "priority": 2
         }
       },
-      "minecraft:lightning_immune": {
-        "minecraft:damage_sensor": {
-          "triggers": {
-            "on_damage": {
-              "filters": {
-                "test": "is_family",
-                "subject": "other",
-                "value": "lightning"
-              }
-            },
-            "deals_damage": "no"
-          }
+      "minecraft:riding": {},
+      "minecraft:not_riding": {
+        "minecraft:teleport": {
+          "random_teleports": true,
+          "max_random_teleport_time": 30,
+          "random_teleport_cube": [
+            32,
+            32,
+            32
+          ],
+          "target_distance": 16,
+          "target_teleport_chance": 0.05,
+          "light_teleport_chance": 0.05
         }
       },
       "craft_royale:blue_team": {
@@ -218,50 +184,21 @@
     },
     "components": {
       "minecraft:is_hidden_when_invisible": {},
-      "minecraft:ambient_sound_interval": {},
+      "minecraft:renders_when_invisible": {},
+      "minecraft:experience_reward": {
+        "on_death": "query.last_hit_by_player ? 5 : 0"
+      },
       "minecraft:type_family": {
         "family": [
-          "skeletonhorse",
-          "undead",
+          "enderman",
+          "monster",
           "mob"
         ]
       },
       "minecraft:breathable": {
         "total_supply": 15,
-        "suffocate_time": 0,
-        "breathes_water": true
+        "suffocate_time": 0
       },
-      "minecraft:health": {
-        "value": 15,
-        "max": 15
-      },
-      "minecraft:hurt_on_condition": {
-        "damage_conditions": [
-          {
-            "filters": {
-              "test": "in_lava",
-              "subject": "self",
-              "operator": "==",
-              "value": true
-            },
-            "cause": "lava",
-            "damage_per_tick": 4
-          }
-        ]
-      },
-      "minecraft:movement": {
-        "value": 0.2
-      },
-      "minecraft:underwater_movement": {
-        "value": 0.08
-      },
-      "minecraft:navigation.walk": {
-        "is_amphibious": true,
-        "avoid_water": true,
-        "avoid_damage_blocks": true
-      },
-      "minecraft:movement.basic": {},
-      "minecraft:jump.static": {},
       "minecraft:nameable": {
         "default_trigger": {
           "event": "craft_royale:remove_teams",
@@ -414,159 +351,234 @@
           }
         ]
       },
-      "minecraft:offspring": {
-        "offspring_pairs": {
-          "minecraft:skeleton_horse": "minecraft:skeleton_horse"
-        }
+      "minecraft:loot": {
+        "table": "loot_tables/entities/enderman.json"
       },
-      "minecraft:spawn_egg_interaction": {},
-      "minecraft:horse.jump_strength": {
-        "value": {
-          "range_min": 0.4,
-          "range_max": 1.0
-        }
+      "minecraft:health": {
+        "value": 40,
+        "max": 40
       },
-      "minecraft:leashable": {
-        "presets": [
+      "minecraft:hurt_on_condition": {
+        "damage_conditions": [
           {
-            "filter": {
-              "test": "is_family",
-              "subject": "other",
-              "value": "happy_ghast"
+            "filters": {
+              "test": "in_lava",
+              "subject": "self"
             },
-            "spring_type": "quad_dampened"
+            "cause": "lava",
+            "damage_per_tick": 4
+          },
+          {
+            "filters": {
+              "test": "in_contact_with_water"
+            },
+            "cause": "drowning",
+            "damage_per_tick": 1
           }
         ]
       },
-      "minecraft:rideable": {
-        "seat_count": 1,
-        "family_types": [
-          "player",
-          "skeleton",
-          "zombie"
+      "minecraft:attack": {
+        "damage": 7
+      },
+      "minecraft:follow_range": {
+        "value": 64,
+        "max": 64
+      },
+      "minecraft:collision_box": {
+        "width": 0.6,
+        "height": 2.9
+      },
+      "minecraft:teleport": {
+        "random_teleports": true,
+        "max_random_teleport_time": 30,
+        "random_teleport_cube": [
+          32,
+          32,
+          32
         ],
-        "interact_text": "action.interact.ride.horse",
-        "seats": {
-          "position": [
-            0.0,
-            1.2,
-            -0.2
-          ]
+        "target_distance": 16,
+        "target_teleport_chance": 0.05,
+        "light_teleport_chance": 0.05
+      },
+      "minecraft:looked_at": {
+        "search_radius": 64.0,
+        "set_target": "once_and_stop_scanning",
+        "find_players_only": true,
+        "min_looked_at_duration": 0.25,
+        "filters": {
+          "test": "has_equipment",
+          "domain": "head",
+          "subject": "other",
+          "operator": "not",
+          "value": "carved_pumpkin"
         }
       },
       "minecraft:despawn": {
         "despawn_from_distance": {}
       },
-      "minecraft:behavior.mount_pathing": {
-        "priority": 2,
-        "speed_multiplier": 1.5,
-        "target_dist": 4.0,
-        "track_target": true
+      "minecraft:navigation.walk": {
+        "can_path_over_water": false,
+        "avoid_water": true
       },
-      "minecraft:behavior.player_ride_tamed": {},
-      "minecraft:input_ground_controlled": {},
-      "minecraft:can_power_jump": {},
-      "minecraft:balloonable": {},
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:can_climb": {},
+      "minecraft:physics": {},
+      "minecraft:pushable_by_entity": {},
+      "minecraft:pushable_by_block": {},
+      "minecraft:conditional_bandwidth_optimization": {
+        "default_values": {
+          "max_optimized_distance": 80.0,
+          "max_dropped_ticks": 10,
+          "use_motion_prediction_hints": true
+        }
+      },
+      "minecraft:variable_max_auto_step": {
+        "base_value": 1.0625,
+        "jump_prevented_value": 0.5625
+      },
+      "minecraft:behavior.float": {
+        "priority": 0
+      },
       "minecraft:behavior.random_stroll": {
-        "priority": 6,
-        "speed_multiplier": 0.7
+        "priority": 7,
+        "speed_multiplier": 1.0
       },
       "minecraft:behavior.look_at_player": {
-        "priority": 7,
-        "look_distance": 6.0,
-        "probability": 0.02
+        "priority": 8,
+        "look_distance": 8.0,
+        "probability": 1.0
       },
       "minecraft:behavior.random_look_around": {
         "priority": 8
       },
-      "minecraft:is_tamed": {},
-      "minecraft:physics": {},
-      "minecraft:pushable_by_entity": {
-        "presets": [
-          {
-            "filters": {
-              "all_of": [
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "sulfur_cube"
-                },
-                {
-                  "test": "enum_property",
-                  "subject": "other",
-                  "domain": "minecraft:sulfur_cube_archetype",
-                  "operator": "not",
-                  "value": "none"
-                },
-                {
-                  "test": "is_controlling_passenger_family",
-                  "subject": "self",
-                  "value": "player"
-                }
-              ]
-            },
-            "push_mode": "none"
-          }
-        ]
+      "minecraft:behavior.place_block": {
+        "priority": 10,
+        "xz_range": [
+          -1,
+          1
+        ],
+        "y_range": [
+          0,
+          2
+        ],
+        "chance": 0.0005
       },
-      "minecraft:pushable_by_block": {},
-      "minecraft:conditional_bandwidth_optimization": {},
-      "minecraft:follow_range": {
-        "value": 64,
-        "max": 64
+      "minecraft:behavior.take_block": {
+        "priority": 11,
+        "xz_range": [
+          -2,
+          2
+        ],
+        "y_range": [
+          0,
+          3
+        ],
+        "chance": 0.05,
+        "blocks": [
+          "dirt",
+          "grass_block",
+          "podzol",
+          "coarse_dirt",
+          "mycelium",
+          "dirt_with_roots",
+          "moss_block",
+          "pale_moss_block",
+          "muddy_mangrove_roots",
+          "mud",
+          "sand",
+          "red_sand",
+          "gravel",
+          "brown_mushroom",
+          "red_mushroom",
+          "tnt",
+          "cactus",
+          "cactus_flower",
+          "clay",
+          "pumpkin",
+          "carved_pumpkin",
+          "melon_block",
+          "crimson_fungus",
+          "crimson_nylium",
+          "crimson_roots",
+          "warped_fungus",
+          "warped_nylium",
+          "warped_roots",
+          "dandelion",
+          "open_eyeblossom",
+          "closed_eyeblossom",
+          "poppy",
+          "blue_orchid",
+          "allium",
+          "azure_bluet",
+          "red_tulip",
+          "orange_tulip",
+          "white_tulip",
+          "pink_tulip",
+          "oxeye_daisy",
+          "cornflower",
+          "lily_of_the_valley",
+          "wither_rose",
+          "torchflower",
+          "golden_dandelion"
+        ]
       }
     },
     "events": {
       "minecraft:entity_spawned": {
-        "randomize": [
-          {
-            "weight": 36,
-            "add": {
-              "component_groups": [
-                "minecraft:skeleton_horse_adult"
-              ]
-            }
-          },
-          {
-            "weight": 9,
-            "remove": {
-              "component_groups": [
-                "minecraft:skeleton_horse_r5_upgrade"
-              ]
-            },
-            "add": {
-              "component_groups": [
-                "minecraft:skeleton_horse_baby"
-              ]
-            }
-          }
-        ]
+        "remove": {},
+        "add": {
+          "component_groups": [
+            "minecraft:enderman_calm",
+            "minecraft:not_riding"
+          ]
+        }
       },
-      "minecraft:entity_born": {
+      "minecraft:become_angry": {
         "remove": {
           "component_groups": [
-            "minecraft:skeleton_horse_r5_upgrade"
+            "minecraft:enderman_calm"
           ]
         },
         "add": {
           "component_groups": [
-            "minecraft:skeleton_horse_baby"
+            "minecraft:enderman_angry"
           ]
         }
       },
-      "minecraft:set_trap": {
+      "minecraft:on_calm": {
+        "remove": {
+          "component_groups": [
+            "minecraft:enderman_angry"
+          ]
+        },
         "add": {
           "component_groups": [
-            "minecraft:skeleton_trap",
-            "minecraft:lightning_immune"
+            "minecraft:enderman_calm"
           ]
         }
       },
-      "minecraft:spring_trap": {
+      "minecraft:stopped_riding": {
         "add": {
           "component_groups": [
-            "minecraft:skeleton_horse_adult",
-            "minecraft:lightning_immune"
+            "minecraft:not_riding"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "minecraft:riding"
+          ]
+        }
+      },
+      "minecraft:started_riding": {
+        "add": {
+          "component_groups": [
+            "minecraft:riding"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "minecraft:not_riding"
           ]
         }
       },

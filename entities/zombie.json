@@ -61,7 +61,6 @@
         "suffocate_time": 0,
         "total_supply": 15
       },
-      "minecraft:burns_in_daylight": {},
       "minecraft:can_climb": {},
       "minecraft:collision_box": {
         "height": 1.9,
@@ -70,48 +69,6 @@
       "minecraft:conditional_bandwidth_optimization": {},
       "minecraft:despawn": {
         "despawn_from_distance": {}
-      },
-      "minecraft:environment_sensor": {
-        "triggers": [
-          {
-            "event": "minecraft:start_transforming",
-            "filters": {
-              "test": "is_underwater"
-            }
-          },
-          {
-            "event": "minecraft:on_start_riding_zombie_horse",
-            "filters": {
-              "all_of": [
-                {
-                  "test": "is_vehicle_family",
-                  "value": "zombiehorse"
-                },
-                {
-                  "domain": "minecraft:is_riding_zombie_horse",
-                  "test": "bool_property",
-                  "value": false
-                }
-              ]
-            }
-          },
-          {
-            "event": "minecraft:on_stop_riding_zombie_horse",
-            "filters": {
-              "all_of": [
-                {
-                  "operator": "not",
-                  "test": "is_vehicle_family",
-                  "value": "zombiehorse"
-                },
-                {
-                  "domain": "minecraft:is_riding_zombie_horse",
-                  "test": "bool_property"
-                }
-              ]
-            }
-          }
-        ]
       },
       "minecraft:equip_item": {
         "excluded_items": [
@@ -594,6 +551,10 @@
           "monster",
           "mob"
         ]
+      },
+      "minecraft:follow_range": {
+        "value": 64,
+        "max": 64
       }
     },
     "component_groups": {
@@ -655,50 +616,7 @@
           "transformation_sound": "convert_to_drowned"
         }
       },
-      "minecraft:look_to_start_drowned_transformation": {
-        "minecraft:environment_sensor": {
-          "triggers": [
-            {
-              "event": "minecraft:start_transforming",
-              "filters": {
-                "test": "is_underwater"
-              }
-            },
-            {
-              "event": "minecraft:on_start_riding_zombie_horse",
-              "filters": {
-                "all_of": [
-                  {
-                    "test": "is_vehicle_family",
-                    "value": "zombiehorse"
-                  },
-                  {
-                    "domain": "minecraft:is_riding_zombie_horse",
-                    "test": "bool_property",
-                    "value": false
-                  }
-                ]
-              }
-            },
-            {
-              "event": "minecraft:on_stop_riding_zombie_horse",
-              "filters": {
-                "all_of": [
-                  {
-                    "operator": "not",
-                    "test": "is_vehicle_family",
-                    "value": "zombiehorse"
-                  },
-                  {
-                    "domain": "minecraft:is_riding_zombie_horse",
-                    "test": "bool_property"
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      },
+      "minecraft:look_to_start_drowned_transformation": {},
       "minecraft:convert_to_drowned": {
         "minecraft:is_shaking": {},
         "minecraft:transformation": {
@@ -711,49 +629,6 @@
         }
       },
       "minecraft:start_drowned_transformation": {
-        "minecraft:environment_sensor": {
-          "triggers": [
-            {
-              "event": "minecraft:stop_transforming",
-              "filters": {
-                "test": "is_underwater",
-                "value": false
-              }
-            },
-            {
-              "event": "minecraft:on_start_riding_zombie_horse",
-              "filters": {
-                "all_of": [
-                  {
-                    "test": "is_vehicle_family",
-                    "value": "zombiehorse"
-                  },
-                  {
-                    "domain": "minecraft:is_riding_zombie_horse",
-                    "test": "bool_property",
-                    "value": false
-                  }
-                ]
-              }
-            },
-            {
-              "event": "minecraft:on_stop_riding_zombie_horse",
-              "filters": {
-                "all_of": [
-                  {
-                    "operator": "not",
-                    "test": "is_vehicle_family",
-                    "value": "zombiehorse"
-                  },
-                  {
-                    "domain": "minecraft:is_riding_zombie_horse",
-                    "test": "bool_property"
-                  }
-                ]
-              }
-            }
-          ]
-        },
         "minecraft:timer": {
           "looping": false,
           "time": 30,
@@ -884,6 +759,48 @@
               "max_dist": 35
             }
           ]
+        },
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "on_damage": {
+                "filters": {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "blue_team"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "is_family",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "is_family",
+                          "subject": "other",
+                          "value": "blue_team"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "deals_damage": "no"
+            }
+          ]
+        },
+        "minecraft:variant": {
+          "value": 0
         }
       },
       "craft_royale:red_team": {
@@ -912,6 +829,48 @@
               "max_dist": 35
             }
           ]
+        },
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "on_damage": {
+                "filters": {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "red_team"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "is_family",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "is_family",
+                          "subject": "other",
+                          "value": "red_team"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "deals_damage": "no"
+            }
+          ]
+        },
+        "minecraft:variant": {
+          "value": 1
         }
       }
     },

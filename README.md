@@ -79,3 +79,5 @@ Hay que agregar el código dentro de components para poder hacer que funcionen b
   }
 }
 ```
+
+iniciar partida

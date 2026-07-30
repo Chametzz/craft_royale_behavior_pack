@@ -3,9 +3,7 @@
   "minecraft:item": {
     "description": {
       "identifier": "craft_royale_card:snow_golem_card",
-      "menu_category": {
-        "category": "items"
-      }
+      "category": "equipment"
     },
     "components": {
       "minecraft:icon": "snow_golem_card",

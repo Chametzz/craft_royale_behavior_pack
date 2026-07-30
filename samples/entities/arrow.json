@@ -44,10 +44,7 @@
             "apply_effect_to_blocking_targets": false
           },
           "impact_damage": {
-            "damage": [
-              1,
-              4
-            ],
+            "damage": [1, 4],
             "knockback": true,
             "destroy_on_hit": true,
             "semi_random_diff_damage": false
@@ -56,11 +53,7 @@
             "shake_time": 0.35
           }
         },
-        "offset": [
-          0,
-          -0.1,
-          0
-        ],
+        "offset": [0, -0.1, 0],
         "should_bounce": true,
         "uncertainty_base": 16,
         "uncertainty_multiplier": 4
@@ -94,11 +87,7 @@
               "shake_time": 0.35
             }
           },
-          "offset": [
-            0,
-            -0.1,
-            0
-          ],
+          "offset": [0, -0.1, 0],
           "should_bounce": true,
           "uncertainty_base": 1,
           "uncertainty_multiplier": 0
@@ -115,10 +104,7 @@
               "apply_effect_to_blocking_targets": false
             },
             "impact_damage": {
-              "damage": [
-                1,
-                5
-              ],
+              "damage": [1, 5],
               "knockback": true,
               "destroy_on_hit": true,
               "semi_random_diff_damage": false
@@ -127,11 +113,7 @@
               "shake_time": 0.35
             }
           },
-          "offset": [
-            0,
-            -0.1,
-            0
-          ],
+          "offset": [0, -0.1, 0],
           "should_bounce": true,
           "uncertainty_base": 16,
           "uncertainty_multiplier": 4
@@ -148,10 +130,7 @@
               "apply_effect_to_blocking_targets": false
             },
             "impact_damage": {
-              "damage": [
-                3,
-                6
-              ],
+              "damage": [3, 6],
               "knockback": true,
               "destroy_on_hit": true,
               "semi_random_diff_damage": false
@@ -160,11 +139,7 @@
               "shake_time": 0.35
             }
           },
-          "offset": [
-            0,
-            -0.1,
-            0
-          ],
+          "offset": [0, -0.1, 0],
           "should_bounce": true,
           "uncertainty_base": 16,
           "uncertainty_multiplier": 4
@@ -180,9 +155,7 @@
               "value": "hard"
             },
             "add": {
-              "component_groups": [
-                "minecraft:hard_arrow"
-              ]
+              "component_groups": ["minecraft:hard_arrow"]
             }
           },
           {
@@ -192,9 +165,7 @@
               "value": "player"
             },
             "add": {
-              "component_groups": [
-                "minecraft:player_arrow"
-              ]
+              "component_groups": ["minecraft:player_arrow"]
             }
           },
           {
@@ -204,9 +175,7 @@
               "value": "pillager"
             },
             "add": {
-              "component_groups": [
-                "minecraft:pillager_arrow"
-              ]
+              "component_groups": ["minecraft:pillager_arrow"]
             }
           }
         ]

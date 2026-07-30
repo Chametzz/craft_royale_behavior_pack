@@ -1,5 +1,6 @@
 import json
 import os
+import commentjson
 
 
 class Team:
@@ -29,6 +30,15 @@ ATTACK_COMPONENTS_TO_REMOVE = [
     "minecraft:zombify_properties",
     "minecraft:environment_sensor",  # Remueve sensores de luz/clima que las vuelven neutrales
     "minecraft:cannot_be_attacked",
+    "minecraft:behavior.nearest_prioritized_attackable_target",
+    "minecraft:despawn",
+    "minecraft:hurt_when_wet",
+    "minecraft:behavior.avoid_mob_type",
+    "minecraft:behavior.nearest_attackable_target_or_retaliate",
+    "minecraft:damage_condition",
+    "minecraft:angry",
+    "minecraft:behavior.panic",
+    "minecraft:experience_reward",
 ]
 
 team_components = {}
@@ -39,15 +49,71 @@ team_properties = {}
 # team_components["minecraft:type_family"] = {"family": []}
 team_components["minecraft:follow_range"] = {"value": 128, "max": 128}
 team_components["minecraft:damage_sensor"] = {
-    "triggers": [{"on_damage": {"filters": {"any_of": []}}, "deals_damage": "no"}]
+    "triggers": [
+        {"on_damage": {"filters": {"any_of": []}}, "deals_damage": "no"},
+        {"cause": "fall", "deals_damage": "no"},
+    ]
 }
+
 team_components["minecraft:behavior.nearest_attackable_target"] = {
-    "priority": 2,
-    "must_see": True,
+    "priority": 1,
+    "must_see": False,
     "reselect_targets": True,
+    "target_search_height": 80,
     "within_radius": 64,
-    "entity_types": [{"filters": {"any_of": []}, "max_dist": 128}],
+    "entity_types": [
+        {"filters": {"all_of": [{"any_of": []}, {"any_of": []}]}, "max_dist": 128}
+    ],
 }
+
+team_components["minecraft:behavior.nearest_attackable_target"]["entity_types"][0][
+    "filters"
+]["all_of"][0]["any_of"].extend(
+    [
+        # CASO 1: Es una Win Condition (SOLO ataca estructuras)
+        {
+            "all_of": [
+                {"test": "has_tag", "value": "win_condition"},
+                {
+                    "any_of": [
+                        {"test": "has_tag", "subject": "other", "value": "buildings"},
+                        {"test": "is_family", "subject": "other", "value": "tower"},
+                    ]
+                },
+            ]
+        },
+        {
+            "all_of": [
+                {
+                    "test": "has_tag",
+                    "operator": "!=",
+                    "value": "win_condition",
+                },
+                {"test": "has_tag", "value": "anti_air"},
+                {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "value": "air",
+                },
+            ]
+        },
+        {
+            "all_of": [
+                {
+                    "test": "has_tag",
+                    "operator": "!=",
+                    "value": "win_condition",
+                },
+                {
+                    "test": "has_tag",
+                    "operator": "!=",
+                    "subject": "other",
+                    "value": "air",
+                },
+            ]
+        },
+    ]
+)
 team_components["minecraft:nameable"] = {"always_show": True}
 team_properties["craft_royale:team"] = {
     "type": "int",
@@ -57,6 +123,17 @@ team_properties["craft_royale:team"] = {
 }
 
 team_events["craft_royale:remove_teams"] = {"remove": {"component_groups": []}}
+
+team_components["minecraft:damage_sensor"]["triggers"][0]["on_damage"]["filters"][
+    "any_of"
+].append(
+    {
+        "all_of": [
+            {"test": "is_family", "value": "tower"},
+            {"test": "has_tag", "subject": "other", "value": "spell"},
+        ]
+    }
+)
 
 for t in teams:
     # Evitar fuego amigo
@@ -71,10 +148,10 @@ for t in teams:
         }
     )
 
-    # Para que ataque a otros equipos:
+    # Tropas normales
     team_components["minecraft:behavior.nearest_attackable_target"]["entity_types"][0][
         "filters"
-    ]["any_of"].extend(
+    ]["all_of"][1]["any_of"].extend(
         [
             {
                 "all_of": [
@@ -125,7 +202,7 @@ def run():
 
         try:
             with open(input_file_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
+                data = commentjson.load(f)
             if "minecraft:entity" not in data:
                 print(
                     f"Omitiendo '{file_name}': No contiene la clave 'minecraft:entity'."
@@ -140,6 +217,11 @@ def run():
 
             # Limpiar componentes principales
             clean_components(components)
+
+            # Limpiar grupo de componentes
+            for group in component_groups.values():
+                if isinstance(group, dict):
+                    clean_components(group)
 
             # Limpiar dentro de TODOS los component_groups (donde vivían las conductas de la araña)
             for group in component_groups.values():

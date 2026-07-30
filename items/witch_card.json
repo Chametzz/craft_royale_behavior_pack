@@ -3,14 +3,12 @@
   "minecraft:item": {
     "description": {
       "identifier": "craft_royale_card:witch_card",
-      "menu_category": {
-        "category": "items"
-      }
+      "category": "equipment"
     },
     "components": {
       "minecraft:icon": "witch_card",
       "minecraft:display_name": {
-        "value": "[3] Witch"
+        "value": "[4] Witch"
       },
       "minecraft:max_stack_size": 1
     }

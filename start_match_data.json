@@ -1,0 +1,33 @@
+{
+  "lobby_spawn": { "x": 0, "y": 0, "z": 0 },
+  "arena_bounds": {
+    "min": {
+      "x": 0,
+      "z": 0
+    },
+    "max": {
+      "x": 0,
+      "z": 0
+    }
+  },
+  "king_zone_size": { "x": 0, "z": 0 },
+  "princess_zone_size": { "x": 0, "z": 0 },
+  "blue_team": {
+    "spawn": { "x": 0, "y": 0, "z": 0 },
+    "direction": 270,
+    "king_spawn": { "x": 0, "y": 0, "z": 0 },
+    "princesses_spawn": [
+      { "x": 0, "y": 0, "z": 0 },
+      { "x": 0, "y": 0, "z": 0 }
+    ]
+  },
+  "red_team": {
+    "spawn": { "x": 0, "y": 0, "z": 0 },
+    "direction": 270,
+    "king_spawn": { "x": 0, "y": 0, "z": 0 },
+    "princesses_spawn": [
+      { "x": 0, "y": 0, "z": 0 },
+      { "x": 0, "y": 0, "z": 0 }
+    ]
+  }
+}

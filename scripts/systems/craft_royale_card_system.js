@@ -6,31 +6,94 @@ world.afterEvents.itemUse.subscribe((event) => {
   const player = event.source;
   const item = event.itemStack;
 
+  if (
+    item.typeId == "minecraft:blaze_rod" &&
+    player.getGameMode() == GameMode.Creative
+  ) {
+    const tags = player.getTags();
+    for (const tag of tags) {
+      player.removeTag(tag);
+    }
+    player.addTag("red_team");
+    player.runCommand("title @s title §cTeam Red");
+  }
+
+  if (
+    item.typeId == "minecraft:breeze_rod" &&
+    player.getGameMode() == GameMode.Creative
+  ) {
+    const tags = player.getTags();
+    for (const tag of tags) {
+      player.removeTag(tag);
+    }
+    player.addTag("blue_team");
+    player.runCommand("title @s title §9Team Blue");
+  }
   if (player.hasTag("in_match") || player.getGameMode() == GameMode.Creative) {
     for (const card of craftRoyaleCards) {
       if (item.typeId == card.itemId) {
-        const raycastResult = player.getBlockFromViewDirection({
-          maxDistance: 10,
-        });
+        const dimension = player.dimension;
+
+        const raycastResult = player.getBlockFromViewDirection({});
 
         if (!raycastResult) return;
+        const hitBlock = raycastResult.block;
+        const face = raycastResult.face;
 
-        const targetBlock = raycastResult.block;
+        const offsets = {
+          Up: { x: 0, y: 1, z: 0 },
+          Down: { x: 0, y: -1, z: 0 },
+          North: { x: 0, y: 0, z: -1 },
+          South: { x: 0, y: 0, z: 1 },
+          East: { x: 1, y: 0, z: 0 },
+          West: { x: -1, y: 0, z: 0 },
+        };
+
+        const offset = offsets[face] || { x: 0, y: 1, z: 0 };
+
+        const targetLocation = {
+          x: hitBlock.location.x + offset.x,
+          y: hitBlock.location.y + offset.y,
+          z: hitBlock.location.z + offset.z,
+        };
+
+        const target = {
+          x: targetLocation.x + 0.5,
+          y: targetLocation.y,
+          z: targetLocation.z + 0.5,
+        };
+
+        let restrictedArea = false;
+        if (player.hasTag("blue_team")) {
+          restrictedArea = MatchManager.isPositionInsideBounds(
+            target,
+            MatchManager.getTowerBounds(dimension, "red_team"),
+          );
+        }
+
+        if (player.hasTag("red_team")) {
+          restrictedArea = MatchManager.isPositionInsideBounds(
+            target,
+            MatchManager.getTowerBounds(dimension, "blue_team"),
+          );
+        }
+
+        if (player.level < card.elixirCost) {
+          player.sendMessage("§cInsufficient elixir");
+        }
+
+        if (restrictedArea) {
+          player.sendMessage("§cRestricted area");
+        }
 
         if (
-          player.level >= card.elixirCost ||
-          player.getGameMode() == GameMode.Creative
+          !restrictedArea &&
+          (player.level >= card.elixirCost ||
+            player.getGameMode() == GameMode.Creative)
         ) {
           if (player.getGameMode() != GameMode.Creative) {
             player.addLevels(-card.elixirCost);
           }
-          const target = {
-            x: targetBlock.x + 0.5,
-            y: targetBlock.y + 1,
-            z: targetBlock.z + 0.5,
-          };
-
-          const dimension = player.dimension;
 
           /**@type {Entity[]} */
           let entities = card.invoke(target, dimension);

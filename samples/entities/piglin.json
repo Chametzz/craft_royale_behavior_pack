@@ -105,24 +105,13 @@
       },
       "angry": {
         "minecraft:angry": {
-          "duration": 30,
           "broadcast_anger": true,
           "broadcast_anger_on_attack": true,
           "broadcast_anger_on_being_attacked": true,
           "broadcast_range": 16,
           "broadcast_targets": ["piglin"],
-          "calm_event": {
-            "event": "become_calm_event",
-            "target": "self"
-          },
           "filters": {
             "all_of": [
-              {
-                "test": "is_family",
-                "subject": "other",
-                "operator": "not",
-                "value": "piglin"
-              },
               {
                 "test": "has_component",
                 "subject": "self",

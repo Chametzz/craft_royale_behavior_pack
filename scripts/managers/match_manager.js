@@ -9,6 +9,11 @@ import {
   ItemLockMode,
 } from "@minecraft/server";
 import { craftRoyaleCards } from "../data/craft_royale_card";
+import {
+  elixirMultiplier,
+  setElixirMultiplier,
+  stopElixir,
+} from "../systems/elixir_system";
 
 export class MatchManager {
   static time = 180;
@@ -21,7 +26,7 @@ export class MatchManager {
 
   /** @type {Map<string, string[]>} */
   static playerDecks = new Map();
-
+  static arenaBounds = { min: { x: 0, z: 0 }, max: { x: 0, z: 0 } };
   static lobbySpawn = { x: 0, y: 0, z: 0 };
   static blueSpawn = { x: 0, y: 0, z: 0 };
   static redSpawn = { x: 0, y: 0, z: 0 };
@@ -31,6 +36,8 @@ export class MatchManager {
   static redKingSpawn = { x: 0, y: 0, z: 0 };
   static bluePrincessesSpawn = { x: 0, y: 0, z: 0 };
   static redPrincessesSpawn = { x: 0, y: 0, z: 0 };
+  static kingZoneSize = { x: 0, z: 0 };
+  static princessZoneSize = { x: 0, z: 0 };
 
   //updates
   static timerUpdater;
@@ -42,18 +49,21 @@ export class MatchManager {
   static get timerLabel() {
     const minutes = Math.floor(this.timer / 60);
     const seconds = this.timer % 60;
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    return `${minutes}:${seconds.toString().padStart(2, "0")} §5x${elixirMultiplier}`;
   }
 
-  //"original_spawn": list[number]
-  //"blue_spawn": list[number]
-  //"red_spawn": list[number]
+  //"arena_bounds": list[min_x, min_z, max_x, max_z]
+  //"lobby_spawn": list[x, y, z]
+  //"blue_spawn": list[x, y, z]
+  //"red_spawn": list[x, y, z]
   //"blue_direction": number
   //"red_direction", number
-  //"blue_king_spawn": list[number]
-  //"red_king_spawn": list[number]
-  //"blue_princesses_spawn": list[list[number]]
-  //"red_princesses_spawn": list[list[number]]
+  //"blue_king_spawn": list[x, y, z]
+  //"red_king_spawn": list[x, y, z]
+  //"blue_princesses_spawn": list[list[x, y, z]]
+  //"red_princesses_spawn": list[list[x, y, z]]
+  //"king_zone_size": list[x, z]
+  //"princess_zone_size": list[x, z]
   /**
    *
    * @param {String} json
@@ -108,6 +118,16 @@ export class MatchManager {
     if (!this.inProgress) {
       try {
         let params = JSON.parse(jsonString);
+        this.arenaBounds = {
+          min: {
+            x: params["arena_bounds"][0],
+            z: params["arena_bounds"][1],
+          },
+          max: {
+            x: params["arena_bounds"][2],
+            z: params["arena_bounds"][3],
+          },
+        };
         this.lobbySpawn = {
           x: params["lobby_spawn"][0],
           y: params["lobby_spawn"][1],
@@ -145,6 +165,14 @@ export class MatchManager {
           y: p[1],
           z: p[2],
         }));
+        this.kingZoneSize = {
+          x: params["king_zone_size"][0],
+          z: params["king_zone_size"][1],
+        };
+        this.princessZoneSize = {
+          x: params["princess_zone_size"][0],
+          z: params["princess_zone_size"][1],
+        };
       } catch (error) {
         world.sendMessage(error);
         return;
@@ -192,6 +220,7 @@ export class MatchManager {
       }
 
       //events
+      setElixirMultiplier(1);
       this.timerUpdater = system.runInterval(() => {
         this.updateTimer(1);
       }, 20);
@@ -240,6 +269,26 @@ export class MatchManager {
     if (this.inProgress) {
       this.timer -= deltaTime;
       this.sendMessageTimer();
+      if (this.timer > 0 && this.timer <= 10) {
+        for (const p of world.getAllPlayers()) {
+          p.onScreenDisplay.setTitle(`${this.timer}`);
+        }
+      }
+      if (this.timer == 60) {
+        if (!this.isSuddenDeath) {
+          for (const p of world.getAllPlayers()) {
+            p.onScreenDisplay.setTitle("§560 §rSeconds left");
+            p.onScreenDisplay.updateSubtitle("§5x2 Elixir");
+            setElixirMultiplier(2);
+          }
+        } else {
+          for (const p of world.getAllPlayers()) {
+            p.onScreenDisplay.setTitle("§560 §rSeconds left");
+            p.onScreenDisplay.updateSubtitle("§5x3 Elixir");
+            setElixirMultiplier(3);
+          }
+        }
+      }
       if (this.timer <= 0) {
         let dimension = world.getDimension("overworld");
         if (!this.isSuddenDeath) {
@@ -378,6 +427,7 @@ export class MatchManager {
   static stop() {
     world.gameRules.pvp = false;
     this.clearAllPlayerDecks();
+    stopElixir();
     if (!this.inProgress) {
       this.delay = 0;
       if (this.delayUpdater != undefined) {
@@ -406,6 +456,8 @@ export class MatchManager {
     tower.setRotation({ x: 0, y: direction });
     tower.addTag("in_match");
     tower.addTag(teamKey);
+    tower.addTag("buildings");
+    tower.addTag("anti_air");
     tower.setProperty("craft_royale:team", teamKey == "red_team" ? 1 : 0);
     MatchManager.showHealthEntity(tower);
     //tower.triggerEvent(`craft_royale:add_${teamKey}`);
@@ -421,6 +473,8 @@ export class MatchManager {
     tower.setRotation({ x: 0, y: direction });
     tower.addTag("in_match");
     tower.addTag(teamKey);
+    tower.addTag("buildings");
+    tower.addTag("anti_air");
     tower.setProperty("craft_royale:team", teamKey == "red_team" ? 1 : 0);
     MatchManager.showHealthEntity(tower);
     //tower.triggerEvent(`craft_royale:add_${teamKey}`);
@@ -515,6 +569,7 @@ export class MatchManager {
     player.extinguishFire();
 
     player.resetLevel();
+    player.addLevels(5);
 
     if (player.hasTag("blue_team") || player.hasTag("red_team")) {
       player.addTag("in_match");
@@ -678,6 +733,94 @@ export class MatchManager {
         teamNameTag = "§cRed Team\n";
       }
       entity.nameTag = `${teamNameTag}:heart: ${currentHealth}/${maxHealth}`;
+    }
+  }
+
+  /**
+   *
+   * @param {Dimension} dimension
+   * @param {String} teamKey
+   * @returns  {{ min: {x: number, z: number}, max: {x: number, z: number} }[]}
+   */
+  static getTowerBounds(dimension, teamKey) {
+    const entities = dimension.getEntities({
+      tags: [teamKey],
+      families: ["tower"],
+    });
+    const bounds = [];
+    entities.forEach((e) => {
+      let sizeX = 0;
+      let sizeZ = 0;
+      if (e.typeId == "craft_royale:king_tower") {
+        sizeX = this.kingZoneSize.x;
+        sizeZ = this.kingZoneSize.z;
+      }
+      if (e.typeId == "craft_royale:princess_tower") {
+        sizeX = this.princessZoneSize.x;
+        sizeZ = this.princessZoneSize.z;
+      }
+      const halfX = sizeX * 0.5;
+      const halfZ = sizeZ * 0.5;
+      const pos = e.location;
+      bounds.push({
+        min: {
+          x: pos.x - halfX,
+          z: pos.z - halfZ,
+        },
+        max: {
+          x: pos.x + halfX,
+          z: pos.z + halfZ,
+        },
+      });
+    });
+    return bounds;
+  }
+
+  /**
+   *
+   * @param {x: number, z: number} position
+   * @param {{ min: {x: number, z: number}, max: {x: number, z: number} }[]} bounds
+   * @returns {boolean}
+   */
+  static isPositionInsideBounds(position, bounds) {
+    return bounds.some(
+      (b) =>
+        position.x >= b.min.x &&
+        position.x <= b.max.x &&
+        position.z >= b.min.z &&
+        position.z <= b.max.z,
+    );
+  }
+
+  /**
+   *
+   * @param {Entity} entity
+   */
+  static repositionEntityInArena(entity) {
+    const currentPos = entity.location;
+
+    let newX = currentPos.x;
+    let newZ = currentPos.z;
+
+    if (currentPos.x < this.arenaBounds.min.x) {
+      newX = this.arenaBounds.min.x;
+    } else if (currentPos.x > this.arenaBounds.max.x) {
+      newX = this.arenaBounds.max.x;
+    }
+
+    // Evaluamos el eje Z (corrigiendo el selector a .z)
+    if (currentPos.z < this.arenaBounds.min.z) {
+      newZ = this.arenaBounds.min.z;
+    } else if (currentPos.z > this.arenaBounds.max.z) {
+      newZ = this.arenaBounds.max.z;
+    }
+
+    if (newX !== currentPos.x || newZ !== currentPos.z) {
+      entity.teleport({
+        x: newX,
+        y: currentPos.y,
+        z: newZ,
+      });
     }
   }
 }

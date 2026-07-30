@@ -1,0 +1,650 @@
+{
+  "format_version": "1.26.20",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "minecraft:hoglin",
+      "spawn_category": "monster",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "properties": {
+        "craft_royale:team": {
+          "type": "int",
+          "default": 0,
+          "client_sync": true,
+          "range": [
+            0,
+            1
+          ]
+        }
+      }
+    },
+    "component_groups": {
+      "zombification_sensor": {},
+      "start_zombification": {
+        "minecraft:is_shaking": {},
+        "minecraft:timer": {
+          "looping": false,
+          "time": 15,
+          "time_down_event": {
+            "event": "become_zombie_event"
+          }
+        }
+      },
+      "become_zombie": {
+        "minecraft:transformation": {
+          "into": "minecraft:zoglin",
+          "transformation_sound": "mob.hoglin.converted_to_zombified",
+          "keep_level": true
+        }
+      },
+      "angry_hoglin": {},
+      "attack_cooldown": {
+        "minecraft:attack_cooldown": {
+          "attack_cooldown_time": [
+            10.0,
+            15.0
+          ],
+          "attack_cooldown_complete_event": {
+            "event": "attack_cooldown_complete_event",
+            "target": "self"
+          }
+        }
+      },
+      "minecraft:hoglin_baby": {
+        "minecraft:type_family": {
+          "family": [
+            "hoglin",
+            "hoglin_baby",
+            "mob"
+          ]
+        },
+        "minecraft:is_baby": {},
+        "minecraft:movement": {
+          "value": 0.36
+        },
+        "minecraft:behavior.melee_box_attack": {
+          "priority": 4,
+          "speed_multiplier": 1,
+          "track_target": true,
+          "cooldown_time": 0.75
+        },
+        "minecraft:attack": {
+          "damage": 1.0
+        },
+        "minecraft:scale": {
+          "value": 0.5
+        },
+        "minecraft:collision_box": {
+          "height": 1.7,
+          "width": 1.5
+        },
+        "minecraft:custom_hit_test": {
+          "hitboxes": [
+            {
+              "width": 1.0,
+              "height": 0.85,
+              "pivot": [
+                0,
+                0.5,
+                0
+              ]
+            }
+          ]
+        },
+        "minecraft:ageable": {
+          "duration": 1200,
+          "feed_items": [
+            "crimson_fungus"
+          ],
+          "pause_growth_items": [
+            "golden_dandelion"
+          ],
+          "reset_growth_items": [
+            "golden_dandelion"
+          ],
+          "grow_up": {
+            "event": "minecraft:ageable_grow_up",
+            "target": "self"
+          }
+        },
+        "minecraft:behavior.follow_parent": {
+          "priority": 6,
+          "speed_multiplier": 1
+        },
+        "minecraft:rideable": {
+          "seat_count": 3,
+          "family_types": [
+            "piglin"
+          ],
+          "seats": [
+            {
+              "position": [
+                0.0,
+                1.125,
+                -0.3
+              ],
+              "lock_rider_rotation": 0
+            },
+            {
+              "position": [
+                0.0,
+                2.625,
+                -0.3
+              ],
+              "lock_rider_rotation": 0
+            },
+            {
+              "position": [
+                0.0,
+                4.125,
+                -0.3
+              ],
+              "lock_rider_rotation": 0
+            }
+          ]
+        }
+      },
+      "minecraft:hoglin_adult": {
+        "minecraft:collision_box": {
+          "width": 1.4,
+          "height": 1.4
+        },
+        "minecraft:leashable_to": {},
+        "minecraft:movement": {
+          "value": 0.3
+        },
+        "minecraft:custom_hit_test": {
+          "hitboxes": [
+            {
+              "width": 2.0,
+              "height": 1.75,
+              "pivot": [
+                0,
+                1,
+                0
+              ]
+            }
+          ]
+        },
+        "minecraft:group_size": {
+          "radius": 32,
+          "filters": {
+            "all_of": [
+              {
+                "test": "has_component",
+                "operator": "!=",
+                "value": "minecraft:is_baby"
+              },
+              {
+                "test": "is_family",
+                "value": "hoglin"
+              }
+            ]
+          }
+        },
+        "minecraft:on_target_acquired": {
+          "event": "become_angry_event",
+          "target": "self"
+        },
+        "minecraft:loot": {
+          "table": "loot_tables/entities/hoglin.json"
+        },
+        "minecraft:behavior.melee_box_attack": {
+          "priority": 4,
+          "speed_multiplier": 1,
+          "track_target": true,
+          "cooldown_time": 2
+        },
+        "minecraft:attack": {
+          "damage": [
+            3,
+            9
+          ]
+        },
+        "minecraft:behavior.breed": {
+          "priority": 3,
+          "speed_multiplier": 0.6
+        },
+        "minecraft:breedable": {
+          "require_tame": false,
+          "love_filters": {
+            "test": "has_component",
+            "subject": "self",
+            "operator": "not",
+            "value": "minecraft:attack_cooldown"
+          },
+          "breeds_with": {
+            "minecraft:hoglin": {}
+          },
+          "breed_items": [
+            "crimson_fungus"
+          ]
+        }
+      },
+      "unhuntable_adult": {
+        "minecraft:type_family": {
+          "family": [
+            "hoglin",
+            "hoglin_adult",
+            "mob"
+          ]
+        }
+      },
+      "huntable_adult": {
+        "minecraft:type_family": {
+          "family": [
+            "hoglin",
+            "hoglin_adult",
+            "hoglin_huntable",
+            "mob"
+          ]
+        }
+      }
+    },
+    "components": {
+      "minecraft:rideable": {
+        "seat_count": 1,
+        "family_types": [],
+        "seats": [
+          {
+            "position": [
+              0.0,
+              1.4,
+              -0.2
+            ]
+          }
+        ]
+      },
+      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
+      "minecraft:offspring": {
+        "offspring_pairs": {
+          "minecraft:hoglin": "minecraft:hoglin"
+        }
+      },
+      "minecraft:spawn_egg_interaction": {},
+      "minecraft:health": {
+        "value": 40,
+        "max": 40
+      },
+      "minecraft:knockback_resistance": {
+        "value": 0.6
+      },
+      "minecraft:breathable": {
+        "total_supply": 15,
+        "suffocate_time": 0
+      },
+      "minecraft:hurt_on_condition": {
+        "damage_conditions": [
+          {
+            "filters": {
+              "test": "in_lava",
+              "subject": "self",
+              "operator": "==",
+              "value": true
+            },
+            "cause": "lava",
+            "damage_per_tick": 4
+          }
+        ]
+      },
+      "minecraft:behavior.avoid_block": {
+        "priority": 1,
+        "tick_interval": 5,
+        "search_range": 8,
+        "search_height": 4,
+        "walk_speed_modifier": 1,
+        "sprint_speed_modifier": 1,
+        "avoid_block_sound": "retreat",
+        "sound_interval": {
+          "min": 2.0,
+          "max": 5.0
+        },
+        "target_selection_method": "nearest",
+        "target_blocks": [
+          "minecraft:warped_fungus",
+          "minecraft:portal",
+          "minecraft:respawn_anchor"
+        ],
+        "on_escape": [
+          {
+            "event": "escaped_event",
+            "target": "self"
+          }
+        ]
+      },
+      "minecraft:navigation.walk": {
+        "can_path_over_water": true,
+        "avoid_water": true,
+        "avoid_damage_blocks": true
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:can_climb": {},
+      "minecraft:collision_box": {
+        "height": 1.9,
+        "width": 0.6
+      },
+      "minecraft:leashable": {},
+      "minecraft:behavior.random_stroll": {
+        "priority": 7,
+        "speed_multiplier": 0.4
+      },
+      "minecraft:behavior.random_look_around": {
+        "priority": 9
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 8,
+        "look_distance": 6.0,
+        "probability": 0.02
+      },
+      "minecraft:balloonable": {},
+      "minecraft:physics": {},
+      "minecraft:pushable_by_entity": {},
+      "minecraft:pushable_by_block": {},
+      "minecraft:conditional_bandwidth_optimization": {},
+      "minecraft:follow_range": {
+        "value": 128,
+        "max": 128
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "on_damage": {
+              "filters": {
+                "any_of": [
+                  {
+                    "all_of": [
+                      {
+                        "test": "is_family",
+                        "value": "tower"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "spell"
+                      }
+                    ]
+                  },
+                  {
+                    "all_of": [
+                      {
+                        "test": "has_tag",
+                        "value": "blue_team"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "blue_team"
+                      }
+                    ]
+                  },
+                  {
+                    "all_of": [
+                      {
+                        "test": "has_tag",
+                        "value": "red_team"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "red_team"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "deals_damage": "no"
+          },
+          {
+            "cause": "fall",
+            "deals_damage": "no"
+          }
+        ]
+      },
+      "minecraft:behavior.nearest_attackable_target": {
+        "priority": 1,
+        "must_see": false,
+        "reselect_targets": true,
+        "target_search_height": 80,
+        "within_radius": 64,
+        "entity_types": [
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "win_condition"
+                        },
+                        {
+                          "any_of": [
+                            {
+                              "test": "has_tag",
+                              "subject": "other",
+                              "value": "buildings"
+                            },
+                            {
+                              "test": "is_family",
+                              "subject": "other",
+                              "value": "tower"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "win_condition"
+                        },
+                        {
+                          "test": "has_tag",
+                          "value": "anti_air"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "air"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "win_condition"
+                        },
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "subject": "other",
+                          "value": "air"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "in_match"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "in_match"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "max_dist": 128
+          }
+        ]
+      }
+    },
+    "events": {
+      "minecraft:entity_spawned": {
+        "randomize": [
+          {
+            "weight": 95,
+            "trigger": "spawn_adult"
+          },
+          {
+            "weight": 5,
+            "trigger": "spawn_baby"
+          }
+        ]
+      },
+      "minecraft:entity_born": {
+        "trigger": "spawn_baby"
+      },
+      "spawn_adult": {
+        "add": {
+          "component_groups": [
+            "minecraft:hoglin_adult",
+            "huntable_adult",
+            "zombification_sensor"
+          ]
+        }
+      },
+      "spawn_baby": {
+        "add": {
+          "component_groups": [
+            "minecraft:hoglin_baby",
+            "zombification_sensor"
+          ]
+        }
+      },
+      "stop_zombification_event": {
+        "add": {
+          "component_groups": [
+            "zombification_sensor"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "start_zombification"
+          ]
+        }
+      },
+      "become_zombie_event": {
+        "add": {
+          "component_groups": [
+            "become_zombie"
+          ]
+        }
+      },
+      "start_zombification_event": {
+        "add": {
+          "component_groups": [
+            "start_zombification"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "zombification_sensor"
+          ]
+        }
+      },
+      "spawn_adult_unhuntable": {
+        "add": {
+          "component_groups": [
+            "minecraft:hoglin_adult",
+            "unhuntable_adult",
+            "zombification_sensor"
+          ]
+        }
+      },
+      "minecraft:ageable_grow_up": {
+        "remove": {
+          "component_groups": [
+            "minecraft:hoglin_baby"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "minecraft:hoglin_adult",
+            "huntable_adult"
+          ]
+        }
+      },
+      "become_angry_event": {
+        "add": {
+          "component_groups": [
+            "angry_hoglin"
+          ]
+        }
+      },
+      "become_calm_event": {
+        "remove": {
+          "component_groups": [
+            "angry_hoglin"
+          ]
+        }
+      },
+      "escaped_event": {
+        "add": {
+          "component_groups": [
+            "attack_cooldown"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "angry_hoglin"
+          ]
+        }
+      },
+      "attack_cooldown_complete_event": {
+        "remove": {
+          "component_groups": [
+            "attack_cooldown"
+          ]
+        }
+      },
+      "craft_royale:remove_teams": {
+        "remove": {
+          "component_groups": []
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,266 @@
+{
+  "format_version": "1.26.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "minecraft:breeze_wind_charge_projectile",
+      "is_summonable": false,
+      "is_spawnable": false,
+      "properties": {
+        "craft_royale:team": {
+          "type": "int",
+          "default": 0,
+          "client_sync": true,
+          "range": [
+            0,
+            1
+          ]
+        }
+      }
+    },
+    "components": {
+      "minecraft:collision_box": {
+        "height": 0.3125,
+        "width": 0.3125
+      },
+      "minecraft:conditional_bandwidth_optimization": {
+        "default_values": {
+          "max_dropped_ticks": 7,
+          "max_optimized_distance": 80.0,
+          "use_motion_prediction_hints": true
+        }
+      },
+      "minecraft:explode": {
+        "knockback_scaling": 0.6,
+        "damage_scaling": 0,
+        "allow_underwater": true,
+        "breaks_blocks": false,
+        "causes_fire": false,
+        "max_resistance": 0,
+        "negates_fall_damage": false,
+        "particle_effect": "breeze_wind_burst",
+        "toggles_blocks": true,
+        "power": 3.0,
+        "sound_effect": "breeze_wind_charge.burst"
+      },
+      "minecraft:physics": {},
+      "minecraft:projectile": {
+        "gravity": 0.0,
+        "uncertainty_base": 5.0,
+        "inertia": 1.0,
+        "ignored_entities": [
+          "ender_crystal",
+          "wind_charge_projectile",
+          "breeze_wind_charge_projectile"
+        ],
+        "liquid_inertia": 1.0,
+        "on_hit": {
+          "impact_damage": {
+            "apply_knockback_to_blocking_targets": true,
+            "damage": 1,
+            "knockback": true
+          },
+          "wind_burst_on_hit": {}
+        },
+        "reflect_on_hurt": true,
+        "power": 0.7,
+        "uncertainty_multiplier": 4.0
+      },
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": true
+      },
+      "minecraft:type_family": {
+        "family": [
+          "wind_charge",
+          "wind_charge_projectile"
+        ]
+      },
+      "minecraft:follow_range": {
+        "value": 128,
+        "max": 128
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "on_damage": {
+              "filters": {
+                "any_of": [
+                  {
+                    "all_of": [
+                      {
+                        "test": "is_family",
+                        "value": "tower"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "spell"
+                      }
+                    ]
+                  },
+                  {
+                    "all_of": [
+                      {
+                        "test": "has_tag",
+                        "value": "blue_team"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "blue_team"
+                      }
+                    ]
+                  },
+                  {
+                    "all_of": [
+                      {
+                        "test": "has_tag",
+                        "value": "red_team"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "red_team"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "deals_damage": "no"
+          },
+          {
+            "cause": "fall",
+            "deals_damage": "no"
+          }
+        ]
+      },
+      "minecraft:behavior.nearest_attackable_target": {
+        "priority": 1,
+        "must_see": false,
+        "reselect_targets": true,
+        "target_search_height": 80,
+        "within_radius": 64,
+        "entity_types": [
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "win_condition"
+                        },
+                        {
+                          "any_of": [
+                            {
+                              "test": "has_tag",
+                              "subject": "other",
+                              "value": "buildings"
+                            },
+                            {
+                              "test": "is_family",
+                              "subject": "other",
+                              "value": "tower"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "win_condition"
+                        },
+                        {
+                          "test": "has_tag",
+                          "value": "anti_air"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "air"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "win_condition"
+                        },
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "subject": "other",
+                          "value": "air"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "in_match"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "in_match"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "max_dist": 128
+          }
+        ]
+      },
+      "minecraft:nameable": {
+        "always_show": true
+      }
+    },
+    "events": {
+      "craft_royale:remove_teams": {
+        "remove": {
+          "component_groups": []
+        }
+      }
+    },
+    "component_groups": {}
+  }
+}

@@ -19,21 +19,6 @@
       }
     },
     "components": {
-      "minecraft:behavior.avoid_mob_type": {
-        "entity_types": [
-          {
-            "filters": {
-              "test": "is_family",
-              "subject": "other",
-              "value": "wolf"
-            },
-            "max_dist": 6,
-            "walk_speed_multiplier": 1.2,
-            "sprint_speed_multiplier": 1.2
-          }
-        ],
-        "priority": 4
-      },
       "minecraft:behavior.equip_item": {
         "priority": 3
       },
@@ -81,9 +66,6 @@
         "width": 0.6
       },
       "minecraft:conditional_bandwidth_optimization": {},
-      "minecraft:despawn": {
-        "despawn_from_distance": {}
-      },
       "minecraft:equip_item": {
         "excluded_items": [
           {
@@ -93,12 +75,6 @@
       },
       "minecraft:equipment": {
         "table": "loot_tables/entities/skeleton_gear.json"
-      },
-      "minecraft:experience_reward": {
-        "on_death": {
-          "expression": "query.last_hit_by_player ? 5 + (query.equipment_count * Math.Random(1,3)) : 0",
-          "version": 13
-        }
       },
       "minecraft:health": {
         "max": 20,
@@ -405,6 +381,19 @@
                   {
                     "all_of": [
                       {
+                        "test": "is_family",
+                        "value": "tower"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "spell"
+                      }
+                    ]
+                  },
+                  {
+                    "all_of": [
+                      {
                         "test": "has_tag",
                         "value": "blue_team"
                       },
@@ -432,51 +421,119 @@
               }
             },
             "deals_damage": "no"
+          },
+          {
+            "cause": "fall",
+            "deals_damage": "no"
           }
         ]
       },
       "minecraft:behavior.nearest_attackable_target": {
-        "priority": 2,
-        "must_see": true,
+        "priority": 1,
+        "must_see": false,
         "reselect_targets": true,
+        "target_search_height": 80,
         "within_radius": 64,
         "entity_types": [
           {
             "filters": {
-              "any_of": [
+              "all_of": [
                 {
-                  "all_of": [
+                  "any_of": [
                     {
-                      "test": "has_tag",
-                      "value": "blue_team"
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "win_condition"
+                        },
+                        {
+                          "any_of": [
+                            {
+                              "test": "has_tag",
+                              "subject": "other",
+                              "value": "buildings"
+                            },
+                            {
+                              "test": "is_family",
+                              "subject": "other",
+                              "value": "tower"
+                            }
+                          ]
+                        }
+                      ]
                     },
                     {
-                      "test": "has_tag",
-                      "subject": "other",
-                      "value": "red_team"
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "win_condition"
+                        },
+                        {
+                          "test": "has_tag",
+                          "value": "anti_air"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "air"
+                        }
+                      ]
                     },
                     {
-                      "test": "has_tag",
-                      "subject": "other",
-                      "value": "in_match"
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "win_condition"
+                        },
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "subject": "other",
+                          "value": "air"
+                        }
+                      ]
                     }
                   ]
                 },
                 {
-                  "all_of": [
+                  "any_of": [
                     {
-                      "test": "has_tag",
-                      "value": "red_team"
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "in_match"
+                        }
+                      ]
                     },
                     {
-                      "test": "has_tag",
-                      "subject": "other",
-                      "value": "blue_team"
-                    },
-                    {
-                      "test": "has_tag",
-                      "subject": "other",
-                      "value": "in_match"
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "in_match"
+                        }
+                      ]
                     }
                   ]
                 }

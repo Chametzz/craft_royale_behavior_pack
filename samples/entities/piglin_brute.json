@@ -191,30 +191,25 @@
       },
       "angry": {
         "minecraft:angry": {
-          "angry_sound": "angry",
-          "broadcast_anger": false,
-          "calm_event": {
-            "event": "become_calm_event",
-            "target": "self"
-          },
-          "broadcast_anger_on_attack": false,
+          "broadcast_anger": true,
+          "broadcast_anger_on_attack": true,
           "broadcast_anger_on_being_attacked": true,
           "broadcast_range": 16,
-          "duration": 30,
           "broadcast_targets": ["piglin"],
           "filters": {
             "all_of": [
               {
-                "operator": "!=",
-                "test": "is_family",
-                "subject": "other",
-                "value": "piglin"
+                "test": "has_component",
+                "subject": "self",
+                "operator": "not",
+                "value": "minecraft:attack_cooldown"
               }
             ]
           },
+          "angry_sound": "angry",
           "sound_interval": {
-            "range_max": 5,
-            "range_min": 2
+            "range_min": 2.0,
+            "range_max": 5.0
           }
         }
       },

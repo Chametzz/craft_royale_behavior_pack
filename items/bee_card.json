@@ -1,0 +1,16 @@
+{
+  "format_version": "1.20.50",
+  "minecraft:item": {
+    "description": {
+      "identifier": "craft_royale_card:bee_card",
+      "category": "equipment"
+    },
+    "components": {
+      "minecraft:icon": "bee_card",
+      "minecraft:display_name": {
+        "value": "[2] Bees"
+      },
+      "minecraft:max_stack_size": 1
+    }
+  }
+}

@@ -97,38 +97,7 @@
           "value": 1
         }
       },
-      "angry": {
-        "minecraft:angry": {
-          "broadcast_anger": true,
-          "broadcast_anger_on_attack": true,
-          "broadcast_anger_on_being_attacked": true,
-          "broadcast_range": 16,
-          "broadcast_targets": [
-            "piglin"
-          ],
-          "filters": {
-            "all_of": [
-              {
-                "test": "is_family",
-                "subject": "other",
-                "operator": "not",
-                "value": "piglin"
-              },
-              {
-                "test": "has_component",
-                "subject": "self",
-                "operator": "not",
-                "value": "minecraft:attack_cooldown"
-              }
-            ]
-          },
-          "angry_sound": "angry",
-          "sound_interval": {
-            "range_min": 2.0,
-            "range_max": 5.0
-          }
-        }
-      },
+      "angry": {},
       "attack_cooldown": {
         "minecraft:attack_cooldown": {
           "attack_cooldown_time": [
@@ -152,13 +121,6 @@
         },
         "minecraft:movement": {
           "value": 0.42
-        },
-        "minecraft:experience_reward": {
-          "on_death": "query.last_hit_by_player ? 1 + (query.equipment_count * Math.Random(1,2)) : 0"
-        },
-        "minecraft:behavior.panic": {
-          "priority": 1,
-          "speed_multiplier": 1.1
         },
         "minecraft:type_family": {
           "family": [
@@ -192,9 +154,6 @@
         "minecraft:barter": {
           "barter_table": "loot_tables/entities/piglin_barter.json",
           "cooldown_after_being_attacked": 20
-        },
-        "minecraft:experience_reward": {
-          "on_death": "query.last_hit_by_player ? 5 + (query.equipment_count * Math.Random(1,3)) : 0"
         },
         "minecraft:celebrate_hunt": {
           "celebration_targets": {
@@ -392,9 +351,6 @@
       "minecraft:inventory": {
         "inventory_size": 8
       },
-      "minecraft:despawn": {
-        "despawn_from_distance": {}
-      },
       "minecraft:behavior.admire_item": {
         "priority": 2,
         "admire_item_sound": "admire",
@@ -415,62 +371,6 @@
         "priority": 3
       },
       "minecraft:conditional_bandwidth_optimization": {},
-      "minecraft:behavior.avoid_mob_type": {
-        "priority": 4,
-        "remove_target": true,
-        "entity_types": [
-          {
-            "filters": {
-              "any_of": [
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "zombie_pigman"
-                }
-              ]
-            },
-            "max_dist": 6
-          },
-          {
-            "filters": {
-              "any_of": [
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "zoglin"
-                }
-              ]
-            },
-            "max_dist": 6
-          },
-          {
-            "filters": {
-              "all_of": [
-                {
-                  "test": "has_target",
-                  "subject": "other"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "hoglin"
-                }
-              ]
-            },
-            "sprint_speed_multiplier": 1.2,
-            "check_if_outnumbered": true
-          }
-        ],
-        "on_escape_event": {
-          "event": "become_calm_event",
-          "target": "self"
-        },
-        "avoid_mob_sound": "retreat",
-        "sound_interval": {
-          "min": 2.0,
-          "max": 5.0
-        }
-      },
       "minecraft:behavior.equip_item": {
         "priority": 5
       },
@@ -951,6 +851,19 @@
                   {
                     "all_of": [
                       {
+                        "test": "is_family",
+                        "value": "tower"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "spell"
+                      }
+                    ]
+                  },
+                  {
+                    "all_of": [
+                      {
                         "test": "has_tag",
                         "value": "blue_team"
                       },
@@ -978,51 +891,119 @@
               }
             },
             "deals_damage": "no"
+          },
+          {
+            "cause": "fall",
+            "deals_damage": "no"
           }
         ]
       },
       "minecraft:behavior.nearest_attackable_target": {
-        "priority": 2,
-        "must_see": true,
+        "priority": 1,
+        "must_see": false,
         "reselect_targets": true,
+        "target_search_height": 80,
         "within_radius": 64,
         "entity_types": [
           {
             "filters": {
-              "any_of": [
+              "all_of": [
                 {
-                  "all_of": [
+                  "any_of": [
                     {
-                      "test": "has_tag",
-                      "value": "blue_team"
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "win_condition"
+                        },
+                        {
+                          "any_of": [
+                            {
+                              "test": "has_tag",
+                              "subject": "other",
+                              "value": "buildings"
+                            },
+                            {
+                              "test": "is_family",
+                              "subject": "other",
+                              "value": "tower"
+                            }
+                          ]
+                        }
+                      ]
                     },
                     {
-                      "test": "has_tag",
-                      "subject": "other",
-                      "value": "red_team"
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "win_condition"
+                        },
+                        {
+                          "test": "has_tag",
+                          "value": "anti_air"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "air"
+                        }
+                      ]
                     },
                     {
-                      "test": "has_tag",
-                      "subject": "other",
-                      "value": "in_match"
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "win_condition"
+                        },
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "subject": "other",
+                          "value": "air"
+                        }
+                      ]
                     }
                   ]
                 },
                 {
-                  "all_of": [
+                  "any_of": [
                     {
-                      "test": "has_tag",
-                      "value": "red_team"
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "in_match"
+                        }
+                      ]
                     },
                     {
-                      "test": "has_tag",
-                      "subject": "other",
-                      "value": "blue_team"
-                    },
-                    {
-                      "test": "has_tag",
-                      "subject": "other",
-                      "value": "in_match"
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "in_match"
+                        }
+                      ]
                     }
                   ]
                 }

@@ -32,7 +32,7 @@ system.afterEvents.scriptEventReceive.subscribe((event) => {
     for (const tag of tags) {
       player.removeTag(tag);
     }
-    player.runCommand("title @s subtitle No Team");
+    player.runCommand("title @s title No Team");
   }
 
   if (event.id == "craft_royale:start_match") {

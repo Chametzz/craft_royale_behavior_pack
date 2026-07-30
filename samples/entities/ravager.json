@@ -364,7 +364,6 @@
       },
       "minecraft:rideable": {
         "seat_count": 1,
-        "family_types": ["pillager", "vindicator", "evocation_illager"],
         "seats": {
           "position": [0.0, 2.025, -0.3]
         }

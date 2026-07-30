@@ -31,3 +31,8 @@ world.afterEvents.entityDie.subscribe((event) => {
 world.afterEvents.entityHurt.subscribe((event) => {
   MatchManager.showHealthEntity(event.hurtEntity);
 });
+
+/*world.afterEvents.playerSpawn.subscribe((event) => {
+  const player = event.player;
+  MatchManager.sendPlayerToLobby(player);
+});*/

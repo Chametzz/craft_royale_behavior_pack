@@ -3,14 +3,12 @@
   "minecraft:item": {
     "description": {
       "identifier": "craft_royale_card:skeleton_card",
-      "menu_category": {
-        "category": "items"
-      }
+      "category": "equipment"
     },
     "components": {
       "minecraft:icon": "skeleton_card",
       "minecraft:display_name": {
-        "value": "[3] Skeletons"
+        "value": "[2] Skeletons"
       },
       "minecraft:max_stack_size": 1
     }

@@ -8,7 +8,7 @@
     "components": {
       "minecraft:icon": "evoker_card",
       "minecraft:display_name": {
-        "value": "[4] Evoker"
+        "value": "[3] Evoker"
       },
       "minecraft:max_stack_size": 1
     }

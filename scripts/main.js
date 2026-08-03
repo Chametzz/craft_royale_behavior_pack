@@ -1,5 +1,4 @@
-import "./systems/script_events_system.js";
-import "./systems/elixir_system.js";
-import "./systems/craft_royale_card_system.js";
-import "./systems/team_projectiles_system.js";
-import "./systems/entity_die_system.js";
+import "./events/script_event_receive.js";
+import "./events/item_use.js";
+import "./events/entity_hurt.js";
+import "./events/entity_spawn.js";

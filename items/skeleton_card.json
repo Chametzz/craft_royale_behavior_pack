@@ -8,7 +8,7 @@
     "components": {
       "minecraft:icon": "skeleton_card",
       "minecraft:display_name": {
-        "value": "[2] Skeletons"
+        "value": "[3] Skeletons"
       },
       "minecraft:max_stack_size": 1
     }

@@ -8,7 +8,7 @@
     "components": {
       "minecraft:icon": "ghast_card",
       "minecraft:display_name": {
-        "value": "[4] Ghasts"
+        "value": "[2] Ghast"
       },
       "minecraft:max_stack_size": 1
     }

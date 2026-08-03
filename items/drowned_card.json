@@ -8,7 +8,7 @@
     "components": {
       "minecraft:icon": "drowned_card",
       "minecraft:display_name": {
-        "value": "[4] Drowned"
+        "value": "[3] Drowned"
       },
       "minecraft:max_stack_size": 1
     }

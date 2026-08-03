@@ -1,262 +1,236 @@
-import {
-  Entity,
-  system,
-  world,
-  Vector3,
-  Dimension,
-  Player,
-  ItemStack,
-  ItemLockMode,
-} from "@minecraft/server";
-import { craftRoyaleCards } from "../data/craft_royale_card";
-import {
-  elixirMultiplier,
-  setElixirMultiplier,
-  stopElixir,
-} from "../systems/elixir_system";
+import { Entity, Player, Scoreboard, system, world } from "@minecraft/server";
+import { TeamManager } from "./team_manager.js";
+import { PlayerManager } from "./player_manager.js";
+import { TextStyle } from "../enums/text_style.js";
+import { Team } from "../classes/team.js";
+import { ElixirManager } from "./elixir_manager.js";
+import { keysToCamelCase } from "../utils/keys_to_camel_case.js";
+import { TowerManager } from "./tower_manager.js";
+import { ScoreboardManager } from "./scoreboard_manager.js";
+import { removeFirst } from "../utils/remove_first.js";
+import { CraftRoyaleCardManager } from "./craft_royale_card_manager.js";
 
+/**
+ * @typedef {Object} MatchManagerConstructor
+ * @property {{ x: number, y: number, z: number }} lobbySpawn
+ * @property {{ x: number, z: number }} kingZoneSize
+ * @property {{ x: number, z: number }} princessZoneSize
+ */
+
+/**
+ * @typedef {Object} TeamData
+ * @property {Team} team
+ * @property {{ x: number, y: number, z: number }} spawn
+ * @property { number } direction
+ * @property {{ x: number, y: number, z: number }} kingSpawn
+ * @property {{ x: number, y: number, z: number }[]} princessSpawns
+ * @property {Player[]} players
+ * @property {Entity[]} towers
+ * @property {number} crowns
+ * @property {boolean} isLost
+ */
 export class MatchManager {
-  static time = 180;
-  static suddenDeathTime = 120;
+  /**@type {MatchManager | undefined} */
+  static main;
 
-  static delay = 0;
-  static timer = 0;
-  static inProgress = false;
-  static isSuddenDeath = false;
-
-  /** @type {Map<string, string[]>} */
-  static playerDecks = new Map();
-  static arenaBounds = { min: { x: 0, z: 0 }, max: { x: 0, z: 0 } };
-  static lobbySpawn = { x: 0, y: 0, z: 0 };
-  static blueSpawn = { x: 0, y: 0, z: 0 };
-  static redSpawn = { x: 0, y: 0, z: 0 };
-  static blueDirection = 0;
-  static redDirection = 0;
-  static blueKingSpawn = { x: 0, y: 0, z: 0 };
-  static redKingSpawn = { x: 0, y: 0, z: 0 };
-  static bluePrincessesSpawn = { x: 0, y: 0, z: 0 };
-  static redPrincessesSpawn = { x: 0, y: 0, z: 0 };
-  static kingZoneSize = { x: 0, z: 0 };
-  static princessZoneSize = { x: 0, z: 0 };
-
-  //updates
-  static timerUpdater;
-  static delayUpdater;
-
-  //events
-  static towerDieSub;
-
-  static get timerLabel() {
+  get timerLabel() {
     const minutes = Math.floor(this.timer / 60);
     const seconds = this.timer % 60;
-    return `${minutes}:${seconds.toString().padStart(2, "0")} §5x${elixirMultiplier}`;
+    let color = TextStyle.Reset;
+    if (this.timer <= 30) {
+      if (this.timer % 2 == 0) {
+        color = TextStyle.Red;
+      }
+    }
+    return `${color}${minutes}:${seconds.toString().padStart(2, "0")}`;
   }
 
-  //"arena_bounds": list[min_x, min_z, max_x, max_z]
-  //"lobby_spawn": list[x, y, z]
-  //"blue_spawn": list[x, y, z]
-  //"red_spawn": list[x, y, z]
-  //"blue_direction": number
-  //"red_direction", number
-  //"blue_king_spawn": list[x, y, z]
-  //"red_king_spawn": list[x, y, z]
-  //"blue_princesses_spawn": list[list[x, y, z]]
-  //"red_princesses_spawn": list[list[x, y, z]]
-  //"king_zone_size": list[x, z]
-  //"princess_zone_size": list[x, z]
+  get crownsLabel() {
+    return `${Array.from(this.teamData.values())
+      .map((tD) => `${tD.team.color}${tD.crowns}`)
+      .join(`${TextStyle.Reset} - `)}`;
+  }
+
+  get scoreboard() {
+    return {
+      "§8--------------------": 6,
+      [`§f ${this.isSuddenDeath ? "§6Overtime" : "§eTime left"}: §r${this.timerLabel}`]: 5,
+      [`§d Elixir: x${this.elixirMultiplier}`]: 4,
+      "§8--------------------§0": 3,
+      [`${this.crownsLabel}`]: 2,
+      "§8--------------------§r": 1,
+    };
+  }
+
   /**
    *
-   * @param {String} json
+   * @param {MatchManagerConstructor} data
+   * @param {() => void | undefined} onStop
    */
-  static startWithDelay(jsonString) {
-    if (!this.inProgress) {
-      //reseteo
-      if (this.delayUpdater != undefined) {
-        system.clearRun(this.delayUpdater);
-      }
+  constructor(data, onStop) {
+    this.onStop = onStop;
 
-      this.delay = 5;
+    this.delay = 5;
+    this.time = 180;
+    this.suddenDeathTime = 120;
 
-      for (const p of world.getPlayers()) {
-        p.onScreenDisplay.setTitle(`${this.delay}`);
-      }
-      for (const entity of world.getDimension("overworld").getEntities()) {
-        if (entity.typeId != "minecraft:player") {
-          entity.kill();
-        }
-      }
+    this.lobbySpawn = data.lobbySpawn;
+    this.kingZoneSize = data.kingZoneSize;
+    this.princessZoneSize = data.princessZoneSize;
+    this.waitingRoom = data.waitingRoom;
 
-      this.delayUpdater = system.runInterval(() => {
-        this.delay -= 1;
-        if (this.delay > 0) {
-          for (const p of world.getPlayers()) {
-            p.onScreenDisplay.setTitle(`${this.delay}`);
-          }
-          for (const entity of world.getDimension("overworld").getEntities()) {
-            if (entity.typeId != "minecraft:player") {
-              entity.kill();
-            }
-          }
-        } else {
-          for (const p of world.getPlayers()) {
-            p.onScreenDisplay.setTitle("FIGHT!");
-          }
-          if (this.delayUpdater != undefined) {
-            system.clearRun(this.delayUpdater);
-          }
-          this.start(jsonString);
-        }
-      }, 20);
+    this.timer = 0;
+    this.inProgress = false;
+    this.isSuddenDeath = false;
+
+    /**@type {Map<string, TeamData>} */
+    this.teamData = new Map(
+      data.teamData.map((t) => {
+        const team = Team.get(t.teamKey);
+        return [
+          t.teamKey,
+          {
+            team: team,
+            spawn: t.spawn,
+            direction: t.direction,
+            kingSpawn: t.kingSpawn,
+            princessSpawns: t.princessSpawns,
+            players: [],
+            towers: [],
+            crowns: 0,
+            isLost: false,
+          },
+        ];
+      }),
+    );
+
+    //lobby
+    /**@type {Player[]} */
+    this.players = [];
+
+    //elixir
+    /**@type {Map<string, number>} */
+    this.elixirMultiplier;
+    this.playerElixirMultipliers = new Map();
+
+    //events
+    this.timerUpdaterId = undefined;
+    this.tiebreakerUpdaterId = undefined;
+    this.towerDieEvent = (event) => {
+      if (
+        event.deadEntity.typeId == "craft_royale:princess_tower" ||
+        event.deadEntity.typeId == "craft_royale:king_tower"
+      ) {
+        this.onTowerDie(event.deadEntity);
+      }
+    };
+  }
+
+  /**
+   *
+   * @param {Player} p
+   * @param {string} json
+   */
+  static startMatch(p, json) {
+    if (!this.main) {
+      this.main = new MatchManager(keysToCamelCase(JSON.parse(json)), () => {
+        this.main = undefined;
+      });
+    }
+    if (this.main && !this.main.inProgress) {
+      this.main.addPlayer(p);
+    }
+  }
+
+  static stopMatch() {
+    if (this.main) {
+      this.main.stop();
     }
   }
 
   /**
    *
-   * @param {String} json
+   * @param {Player} player
    */
-  static start(jsonString) {
+  addPlayer(player) {
     if (!this.inProgress) {
-      try {
-        let params = JSON.parse(jsonString);
-        this.arenaBounds = {
-          min: {
-            x: params["arena_bounds"][0],
-            z: params["arena_bounds"][1],
-          },
-          max: {
-            x: params["arena_bounds"][2],
-            z: params["arena_bounds"][3],
-          },
-        };
-        this.lobbySpawn = {
-          x: params["lobby_spawn"][0],
-          y: params["lobby_spawn"][1],
-          z: params["lobby_spawn"][2],
-        };
-        this.blueSpawn = {
-          x: params["blue_spawn"][0],
-          y: params["blue_spawn"][1],
-          z: params["blue_spawn"][2],
-        };
-        this.redSpawn = {
-          x: params["red_spawn"][0],
-          y: params["red_spawn"][1],
-          z: params["red_spawn"][2],
-        };
-        this.blueDirection = params["blue_direction"];
-        this.redDirection = params["red_direction"];
-        this.blueKingSpawn = {
-          x: params["blue_king_spawn"][0],
-          y: params["blue_king_spawn"][1],
-          z: params["blue_king_spawn"][2],
-        };
-        this.redKingSpawn = {
-          x: params["red_king_spawn"][0],
-          y: params["red_king_spawn"][1],
-          z: params["red_king_spawn"][2],
-        };
-        this.bluePrincessesSpawn = params["blue_princesses_spawn"].map((p) => ({
-          x: p[0],
-          y: p[1],
-          z: p[2],
-        }));
-        this.redPrincessesSpawn = params["red_princesses_spawn"].map((p) => ({
-          x: p[0],
-          y: p[1],
-          z: p[2],
-        }));
-        this.kingZoneSize = {
-          x: params["king_zone_size"][0],
-          z: params["king_zone_size"][1],
-        };
-        this.princessZoneSize = {
-          x: params["princess_zone_size"][0],
-          z: params["princess_zone_size"][1],
-        };
-      } catch (error) {
-        world.sendMessage(error);
-        return;
+      this.players.push(player);
+      player.teleport(this.waitingRoom);
+
+      if (this.timerUpdaterId) {
+        system.clearRun(this.timerUpdaterId);
       }
 
-      let dimension = world.getDimension("overworld");
+      this.timer = this.delay;
+      this.displayTimer();
 
-      //rules
-      dimension.runCommand("gamerule doImmediateRespawn true");
-      world.gameRules.pvp = true;
-
-      //init timers
-      this.delay = 5;
-      this.timer = this.time;
-      this.inProgress = true;
-      this.isSuddenDeath = false;
-
-      //spawns
-      this.spawnKingTower(
-        dimension,
-        "blue_team",
-        this.blueKingSpawn,
-        this.blueDirection,
-      );
-      this.spawnKingTower(
-        dimension,
-        "red_team",
-        this.redKingSpawn,
-        this.redDirection,
-      );
-      for (const p of this.bluePrincessesSpawn) {
-        this.spawnPrincessTower(dimension, "blue_team", p, this.blueDirection);
-      }
-      for (const p of this.redPrincessesSpawn) {
-        this.spawnPrincessTower(dimension, "red_team", p, this.redDirection);
-      }
-
-      this.sendMessageTimer();
-
-      //sendPlayers
-      this.assignTeams();
-      for (const p of world.getAllPlayers()) {
-        this.sendPlayerToArena(p);
-        this.registerPlayerDeck(p);
-      }
-
-      //events
-      setElixirMultiplier(1);
-      this.timerUpdater = system.runInterval(() => {
+      this.clearEntities();
+      this.timerUpdaterId = system.runInterval(() => {
         this.updateTimer(1);
       }, 20);
-
-      this.towerDieSub = (event) => {
-        if (
-          event.deadEntity.typeId == "craft_royale:princess_tower" ||
-          event.deadEntity.typeId == "craft_royale:king_tower"
-        ) {
-          this.onTowerDie(event.deadEntity);
-        }
-      };
-      world.afterEvents.entityDie.subscribe(this.towerDieSub);
     }
   }
 
-  /**
-   *
-   * @param {Entity} tower
-   */
-  static onTowerDie(tower) {
-    if (this.inProgress) {
-      if (!this.isSuddenDeath) {
-        if (tower.typeId == "craft_royale:king_tower") {
-          if (tower.hasTag("red_team")) {
-            this.setWinner("blue_team");
-          } else if (tower.hasTag("blue_team")) {
-            this.setWinner("red_team");
-          }
-        }
-      } else {
-        if (tower.hasTag("red_team")) {
-          this.setWinner("blue_team");
-        } else if (tower.hasTag("blue_team")) {
-          this.setWinner("red_team");
-        }
+  start() {
+    this.timer = this.time;
+    this.inProgress = true;
+
+    //Asignar equipos a team data
+    TeamManager.assignTeams(
+      this.players,
+      Array.from(this.teamData.values(), (tD, i) => tD.team),
+    );
+    for (const tD of this.teamData.values()) {
+      tD.players = this.players.filter(
+        (player) => TeamManager.getTeamFromEntity(player) === tD.team,
+      );
+
+      tD.towers.push(
+        TowerManager.spawnTower(
+          "king",
+          tD.team,
+          world.getDimension("overworld"),
+          tD.kingSpawn,
+          tD.direction,
+          this.kingZoneSize,
+        ),
+      );
+
+      for (const s of tD.princessSpawns) {
+        tD.towers.push(
+          TowerManager.spawnTower(
+            "princess",
+            tD.team,
+            world.getDimension("overworld"),
+            s,
+            tD.direction,
+            this.princessZoneSize,
+          ),
+        );
+      }
+    }
+
+    world.afterEvents.entityDie.subscribe(this.towerDieEvent);
+
+    this.updateElixir(1);
+
+    this.sendPlayersToArena();
+
+    this.displayFight();
+    this.displayScoreboard();
+  }
+
+  startSuddenDeath() {
+    this.timer = this.suddenDeathTime;
+    this.isSuddenDeath = true;
+    this.displaySuddenDeath();
+    this.updateScoreboard();
+  }
+
+  clearEntities() {
+    for (const e of world.getDimension("overworld").getEntities()) {
+      if (e.typeId != "minecraft:player") {
+        e.remove();
       }
     }
   }
@@ -265,280 +239,251 @@ export class MatchManager {
    *
    * @param {number} deltaTime
    */
-  static updateTimer(deltaTime) {
-    if (this.inProgress) {
+  updateTimer(deltaTime) {
+    if (this.timer > 0) {
       this.timer -= deltaTime;
-      this.sendMessageTimer();
-      if (this.timer > 0 && this.timer <= 10) {
-        for (const p of world.getAllPlayers()) {
-          p.onScreenDisplay.setTitle(`${this.timer}`);
-        }
-      }
-      if (this.timer == 60) {
-        if (!this.isSuddenDeath) {
-          for (const p of world.getAllPlayers()) {
-            p.onScreenDisplay.setTitle("§560 §rSeconds left");
-            p.onScreenDisplay.updateSubtitle("§5x2 Elixir");
-            setElixirMultiplier(2);
-          }
+
+      if (!this.inProgress) {
+        if (this.timer <= 0) {
+          this.start();
         } else {
-          for (const p of world.getAllPlayers()) {
-            p.onScreenDisplay.setTitle("§560 §rSeconds left");
-            p.onScreenDisplay.updateSubtitle("§5x3 Elixir");
-            setElixirMultiplier(3);
-          }
+          this.displayTimer();
+          this.clearEntities();
         }
-      }
-      if (this.timer <= 0) {
-        let dimension = world.getDimension("overworld");
-        if (!this.isSuddenDeath) {
-          let blueTowersCount = this.getTowerCount(dimension, "blue_team");
-          let redTowersCount = this.getTowerCount(dimension, "red_team");
-
-          if (blueTowersCount > redTowersCount) {
-            this.setWinner("blue_team");
-            return;
-          } else if (redTowersCount > blueTowersCount) {
-            this.setWinner("red_team");
-            return;
-          }
-
-          this.isSuddenDeath = true;
-          this.timer = this.suddenDeathTime;
-          for (const p of world.getAllPlayers()) {
-            p.onScreenDisplay.setTitle("§cSudden Death");
-            p.onScreenDisplay.updateSubtitle("Get next crown to WIN");
-          }
-        } else {
-          let blueTowers = this.getTowers(dimension, "blue_team");
-          let redTowers = this.getTowers(dimension, "red_team");
-
-          let blueLowestTowerHealth = Math.min(
-            ...blueTowers.map(
-              (t) => t.getComponent("minecraft:health").currentValue,
-            ),
-          );
-
-          let redLowestTowerHealth = Math.min(
-            ...redTowers.map(
-              (t) => t.getComponent("minecraft:health").currentValue,
-            ),
-          );
-
-          if (blueLowestTowerHealth > redLowestTowerHealth) {
-            this.setWinner("blue_team");
-          } else if (redLowestTowerHealth > blueLowestTowerHealth) {
-            this.setWinner("red_team");
+      } else {
+        this.updateScoreboard();
+        if (this.timer == 60) {
+          this.updateElixir(this.elixirMultiplier + 1);
+          this.display60SecondsLeft();
+        }
+        if (this.timer == 30) {
+          this.display30SecondsLeft();
+        }
+        if (this.timer > 0 && this.timer <= 10) {
+          let color = "";
+          if (this.timer > 8) {
+            color = TextStyle.Yellow;
+          } else if (this.timer > 2) {
+            color = TextStyle.Gold;
           } else {
-            this.setDraw();
+            color = TextStyle.Red;
+          }
+          this.displayTimer(color);
+        }
+
+        if (!this.isSuddenDeath) {
+          if (this.timer <= 0) {
+            const topTeams = this.getTeamsWithMoreTowers();
+
+            if (topTeams.length == 1) {
+              for (const tD of this.teamData.values()) {
+                if (tD.team.key !== topTeams[0].team.key) {
+                  tD.isLost = true;
+                }
+              }
+              this.determineWinner();
+            } else {
+              this.startSuddenDeath();
+            }
+          }
+        } else {
+          if (this.timer <= 0) {
+            if (this.isDraw()) {
+              this.setDraw();
+            } else {
+              this.displayTiebreaker();
+              this.tiebreakerUpdaterId = system.runInterval(() => {
+                for (const tD of this.teamData.values()) {
+                  for (const tower of tD.towers) {
+                    tower.applyDamage(1);
+                  }
+                }
+              }, 1);
+            }
           }
         }
       }
     }
   }
+
+  stop() {
+    try {
+      ScoreboardManager.remove("craft_royale_scoreboard");
+    } catch (error) {}
+    this.clearEvents();
+    this.sendPlayersToLobby();
+    this.onStop();
+  }
+
+  clearEvents() {
+    ElixirManager.clearUpdaters();
+    if (this.timerUpdaterId !== undefined) {
+      system.clearRun(this.timerUpdaterId);
+    }
+    if (this.tiebreakerUpdaterId !== undefined) {
+      system.clearRun(this.tiebreakerUpdaterId);
+    }
+    world.afterEvents.entityDie.unsubscribe(this.towerDieEvent);
+  }
+
   /**
    *
-   * @param {Entity} entity
+   * @param {number} multiplier
    */
-
-  static sendMessageTimer() {
-    for (const p of world.getAllPlayers()) {
-      p.onScreenDisplay.setActionBar(this.timerLabel);
+  updateElixir(multiplier) {
+    this.elixirMultiplier = multiplier;
+    ElixirManager.clearUpdaters();
+    this.playerElixirMultipliers.clear();
+    const maxPlayersTeam = Math.max(
+      ...Array.from(this.teamData.values(), (tD) => tD.players.length),
+    );
+    for (const data of this.teamData.values()) {
+      const playerCount = Math.max(data.players.length, 1);
+      const realMultiplier = (maxPlayersTeam / playerCount) * multiplier;
+      ElixirManager.addUpdater(data.players, realMultiplier);
+      for (const p of data.players) {
+        this.playerElixirMultipliers.set(p.id, realMultiplier);
+      }
     }
   }
 
   /**
    *
-   * @param {String} winner
+   * @param {Entity} tower
    */
-  static setWinner(teamKey) {
-    this.disableEvents();
+  onTowerDie(tower) {
+    if (this.inProgress) {
+      const towerTeam = TeamManager.getTeamFromEntity(tower);
+      if (!towerTeam) return;
 
-    const dimension = world.getDimension("overworld");
-    const entities = dimension.getEntities();
-    const players = dimension.getPlayers();
+      const tD = this.teamData.get(towerTeam.key);
+      if (!tD) return;
 
-    for (const p of players) {
-      p.setSpawnPoint({
-        x: this.lobbySpawn.x,
-        y: this.lobbySpawn.y,
-        z: this.lobbySpawn.z,
-        dimension: dimension,
-      });
-      p.removeTag("in_match");
+      //Si no remueve una torre entonces no es nuestra torre, retornamos
+      if (!removeFirst(tD.towers, (t, i) => t.id === tower.id)) return;
 
-      if (teamKey == "blue_team") {
-        p.onScreenDisplay.setTitle("§9The Blue Team WINS!");
-      } else if (teamKey == "red_team") {
-        p.onScreenDisplay.setTitle("§cThe Red Team WINS!");
+      // agregamos una corona al resto de equipos
+      for (const otherTD of this.teamData.values()) {
+        if (otherTD.team.key != tD.team.key) {
+          otherTD.crowns += 1;
+        }
       }
-      p.dimension.spawnParticle("minecraft:firework_particle", p.location);
+      this.updateScoreboard();
+      this.displayCrowns();
+
+      // Si se muere el rey se mueren las demás torres y el equipo pierde
+      if (tower.typeId == "craft_royale:king_tower") {
+        for (const t of tD.towers) {
+          if (t.isValid) {
+            t.kill();
+          }
+        }
+        tD.isLost = true;
+      }
+
+      //Si se muere cualquier torre en muerte subita automáticamente pierden
+      if (this.isSuddenDeath) {
+        tD.isLost = true;
+      }
+
+      this.determineWinner();
+    }
+  }
+
+  //determina quien ganó dependiendo si isLost es igual para el resto de equipos menos para uno
+  determineWinner() {
+    const survivors = Array.from(this.teamData.values()).filter(
+      (tD) => !tD.isLost,
+    );
+    if (survivors.length != 1) return;
+
+    this.clearEvents();
+
+    const winner = survivors[0];
+
+    for (const e of world.getDimension("overworld").getEntities()) {
+      e.removeTag("in_match");
+      e.runCommand("summon fireworks_rocket ~ ~ ~");
     }
 
-    for (const entity of entities) {
-      if (!entity.hasTag(teamKey)) {
-        entity.kill();
-      }
-    }
+    PlayerManager.displayTitle(
+      `${winner.team.color}${winner.team.name} Team has WON!`,
+    );
 
     system.runTimeout(() => {
       this.stop();
-      for (const p of players) {
-        if (p.hasTag(teamKey)) {
-          this.sendPlayerToLobby(p);
-        }
+    }, 100);
+  }
+  /**
+   *
+   * @returns {TeamData[]}
+   */
+  getTeamsWithMoreTowers() {
+    let maxTowers = -1;
+    let topTeams = [];
+
+    for (const teamData of this.teamData.values()) {
+      if (teamData.isLost) continue;
+
+      const aliveTowersCount = teamData.towers.filter((t) => t.isValid).length;
+
+      if (aliveTowersCount > maxTowers) {
+        maxTowers = aliveTowersCount;
+        topTeams = [teamData];
+      } else if (aliveTowersCount === maxTowers) {
+        topTeams.push(teamData);
       }
+    }
+
+    return topTeams;
+  }
+
+  setDraw() {
+    for (const e of world.getDimension("overworld").getEntities()) {
+      e.removeTag("in_match");
+    }
+
+    this.clearEvents();
+
+    PlayerManager.displayTitle("DRAW");
+
+    system.runTimeout(() => {
+      this.stop();
     }, 100);
   }
 
-  static setDraw() {
-    this.stop();
-    const dimension = world.getDimension("overworld");
-    const entities = dimension.getEntities();
-    const players = dimension.getPlayers();
+  isDraw() {
+    const teamsLowestHp = [];
 
-    for (const p of players) {
-      p.setSpawnPoint({
-        x: this.lobbySpawn.x,
-        y: this.lobbySpawn.y,
-        z: this.lobbySpawn.z,
-        dimension: dimension,
-      });
+    for (const tD of this.teamData.values()) {
+      if (tD.isLost) continue;
+
+      const towersHp = tD.towers
+        .filter((tower) => tower.isValid)
+        .map((tower) => {
+          const health = tower.getComponent("minecraft:health");
+          return health ? health.currentValue : 0;
+        });
+
+      const lowestHp = towersHp.length > 0 ? Math.min(...towersHp) : 0;
+      teamsLowestHp.push({ team: tD.team, lowestHp });
     }
 
-    for (const entity of entities) {
-      entity.kill();
+    if (teamsLowestHp.length < 2) {
+      return false;
     }
+
+    teamsLowestHp.sort((a, b) => a.lowestHp - b.lowestHp);
+    return teamsLowestHp[0].lowestHp === teamsLowestHp[1].lowestHp;
   }
 
-  static disableEvents() {
-    if (this.delayUpdater != undefined) {
-      system.clearRun(this.delayUpdater);
-    }
-    if (this.timerUpdater != undefined) {
-      system.clearRun(this.timerUpdater);
-    }
-    if (this.towerDieSub) {
-      world.afterEvents.entityDie.unsubscribe(this.towerDieSub);
-      this.towerDieSub = undefined;
-    }
-  }
-
-  static stop() {
-    world.gameRules.pvp = false;
-    this.clearAllPlayerDecks();
-    stopElixir();
-    if (!this.inProgress) {
-      this.delay = 0;
-      if (this.delayUpdater != undefined) {
-        system.clearRun(this.delayUpdater);
-      }
-    }
-    if (this.inProgress) {
-      this.disableEvents();
-      this.delay = 0;
-      this.inProgress = false;
-      this.timer = 0;
-      this.isSuddenDeath = false;
-      for (const p of world.getPlayers()) {
-        this.sendPlayerToLobby(p);
-      }
-    }
-  }
-
-  /**
-   * @param {Dimension} dimension
-   * @param {String} teamKey
-   * @param {{ x, y, z }} position
-   */
-  static spawnKingTower(dimension, teamKey, position, direction = 0) {
-    let tower = dimension.spawnEntity("craft_royale:king_tower", position);
-    tower.setRotation({ x: 0, y: direction });
-    tower.addTag("in_match");
-    tower.addTag(teamKey);
-    tower.addTag("buildings");
-    tower.addTag("anti_air");
-    tower.setProperty("craft_royale:team", teamKey == "red_team" ? 1 : 0);
-    MatchManager.showHealthEntity(tower);
-    //tower.triggerEvent(`craft_royale:add_${teamKey}`);
-  }
-
-  /**
-   *
-   * @param {String} teamKey
-   * @param {{ x, y, z }} position
-   */
-  static spawnPrincessTower(dimension, teamKey, position, direction = 0) {
-    let tower = dimension.spawnEntity("craft_royale:princess_tower", position);
-    tower.setRotation({ x: 0, y: direction });
-    tower.addTag("in_match");
-    tower.addTag(teamKey);
-    tower.addTag("buildings");
-    tower.addTag("anti_air");
-    tower.setProperty("craft_royale:team", teamKey == "red_team" ? 1 : 0);
-    MatchManager.showHealthEntity(tower);
-    //tower.triggerEvent(`craft_royale:add_${teamKey}`);
-  }
-
-  /**
-   *
-   * @param {Dimension} dimension
-   * @param {String} teamKey
-   * @returns {number}
-   */
-  static getTowerCount(dimension, teamKey) {
-    return (
-      dimension.getEntities({
-        type: "craft_royale:king_tower",
-        tags: [teamKey],
-      }).length +
-      dimension.getEntities({
-        type: "craft_royale:princess_tower",
-        tags: [teamKey],
-      }).length
-    );
-  }
-
-  /**
-   *
-   * @param {Dimension} dimension
-   * @param {String} teamKey
-   * @returns {Entity[]}
-   */
-  static getTowers(dimension, teamKey) {
-    return [
-      ...dimension.getEntities({
-        type: "craft_royale:king_tower",
-        tags: [teamKey],
-      }),
-      ...dimension.getEntities({
-        type: "craft_royale:princess_tower",
-        tags: [teamKey],
-      }),
-    ];
-  }
-
+  //send
   /**
    *
    * @param {Player} player
    */
-  static sendPlayerToLobby(player) {
-    const healthComponent = player.getComponent("minecraft:health");
-    if (healthComponent) {
-      healthComponent.resetToMaxValue();
-    }
-
-    const hungerComponent = player.getComponent("minecraft:player.hunger");
-    if (hungerComponent) {
-      hungerComponent.setCurrentValue(20);
-    }
-
-    player.extinguishFire();
-
-    player.resetLevel();
-
-    player.removeTag("blue_team");
-    player.removeTag("red_team");
+  sendPlayerToLobby(player) {
+    PlayerManager.restorePlayer(player);
     player.removeTag("in_match");
     player.setSpawnPoint({
       x: this.lobbySpawn.x,
@@ -546,281 +491,92 @@ export class MatchManager {
       z: this.lobbySpawn.z,
       dimension: player.dimension,
     });
-    player.teleport(this.lobbySpawn, {
-      dimension: player.dimension,
-    });
+    player.teleport(this.lobbySpawn);
   }
 
-  /**
-   *
-   * @param {Player} player
-   */
-  static sendPlayerToArena(player) {
-    const healthComponent = player.getComponent("minecraft:health");
-    if (healthComponent) {
-      healthComponent.resetToMaxValue();
+  sendPlayersToLobby() {
+    for (const p of world.getPlayers()) {
+      this.sendPlayerToLobby(p);
+      CraftRoyaleCardManager.clearDecks();
     }
+  }
 
-    const hungerComponent = player.getComponent("minecraft:player.hunger");
-    if (hungerComponent) {
-      hungerComponent.setCurrentValue(20);
-    }
-
-    player.extinguishFire();
-
-    player.resetLevel();
-    player.addLevels(5);
-
-    if (player.hasTag("blue_team") || player.hasTag("red_team")) {
-      player.addTag("in_match");
-      if (player.hasTag("blue_team")) {
-        player.setSpawnPoint({
-          x: this.blueSpawn.x,
-          y: this.blueSpawn.y,
-          z: this.blueSpawn.z,
-          dimension: player.dimension,
+  sendPlayersToArena() {
+    for (const tD of this.teamData.values()) {
+      for (const p of tD.players) {
+        PlayerManager.restorePlayer(p);
+        p.setSpawnPoint({
+          x: tD.spawn.x,
+          y: tD.spawn.y,
+          z: tD.spawn.z,
+          dimension: p.dimension,
         });
-        player.teleport(this.blueSpawn, { dimension: player.dimension });
-        player.setRotation({ x: 0, y: this.blueDirection });
-      } else {
-        player.setSpawnPoint({
-          x: this.redSpawn.x,
-          y: this.redSpawn.y,
-          z: this.redSpawn.z,
-          dimension: player.dimension,
-        });
-        player.teleport(this.redSpawn, { dimension: player.dimension });
-        player.setRotation({ x: 0, y: this.redDirection });
+        p.teleport(tD.spawn, { rotation: { x: 0, y: tD.direction } });
+        p.addTag("in_match");
+        CraftRoyaleCardManager.addDeck(p);
       }
     }
   }
 
-  static assignTeams() {
-    const players = world.getAllPlayers();
-
-    const unassignedPlayers = [];
-    let blueCount = 0;
-    let redCount = 0;
-
-    for (const p of players) {
-      if (p.hasTag("blue_team")) {
-        blueCount++;
-      } else if (p.hasTag("red_team")) {
-        redCount++;
-      } else {
-        unassignedPlayers.push(p);
-      }
-    }
-
-    for (let i = unassignedPlayers.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [unassignedPlayers[i], unassignedPlayers[j]] = [
-        unassignedPlayers[j],
-        unassignedPlayers[i],
-      ];
-    }
-
-    for (const player of unassignedPlayers) {
-      if (blueCount < redCount) {
-        player.addTag("blue_team");
-        player.triggerEvent("craft_royale:remove_teams");
-        player.triggerEvent("craft_royale:add_blue_team");
-        blueCount++;
-      } else if (redCount < blueCount) {
-        player.addTag("red_team");
-        player.triggerEvent("craft_royale:remove_teams");
-        player.triggerEvent("craft_royale:add_red_team");
-        redCount++;
-      } else {
-        const randomTeam = Math.random() < 0.5 ? "blue_team" : "red_team";
-        player.addTag(randomTeam);
-
-        if (randomTeam === "blue_team") blueCount++;
-        else redCount++;
-      }
-    }
-  }
-  /**
-   *
-   * @param {Player} player
-   */
-  static registerPlayerDeck(player) {
-    if (!this.playerDecks.has(player.id)) {
-      const inventory = player.getComponent("minecraft:inventory")?.container;
-      if (!inventory) return;
-
-      const cards = new Set();
-      for (let i = 0; i < inventory.size; i++) {
-        const item = inventory.getItem(i);
-        if (item && item.typeId.startsWith("craft_royale_card:")) {
-          cards.add(item.typeId);
-        }
-      }
-
-      if (cards.size < 8) {
-        const cardsAvailable = craftRoyaleCards.filter(
-          (c) => !cards.has(c.itemId),
-        );
-        while (cards.size < 8 && cardsAvailable.length > 0) {
-          const randomIndex = Math.floor(Math.random() * cardsAvailable.length);
-          const [selectedCard] = cardsAvailable.splice(randomIndex, 1);
-          cards.add(selectedCard.itemId);
-        }
-      }
-
-      const deck = Array.from(cards).sort(() => Math.random() - 0.5);
-
-      this.playerDecks.set(player.id, []);
-
-      inventory.clearAll();
-
-      for (let i = 0; i < deck.length; i++) {
-        if (i < 4) {
-          const item = new ItemStack(deck[i], 1);
-          item.keepOnDeath = true;
-          item.lockMode = ItemLockMode.slot;
-          inventory.addItem(item);
-        } else {
-          this.playerDecks.get(player.id).push(deck[i]);
-        }
-      }
-    }
-  }
-  /**
-   *
-   * @param {Player} player
-   */
-  static clearAllPlayerDecks() {
-    const keys = Array.from(this.playerDecks.keys());
-    for (const k of keys) {
-      const player = world.getEntity(k);
-      if (player && player instanceof Player) {
-        const inventory = player.getComponent("minecraft:inventory")?.container;
-        if (inventory) {
-          for (let i = 0; i < inventory.size; i++) {
-            const item = inventory.getItem(i);
-            if (item && item.typeId.startsWith("craft_royale_card:")) {
-              this.playerDecks.get(k).push(item.typeId);
-            }
-          }
-          inventory.clearAll();
-          for (const card of this.playerDecks.get(k)) {
-            const item = new ItemStack(card, 1);
-            inventory.addItem(item);
-          }
-        }
-      }
-      this.playerDecks.delete(k);
-    }
-  }
-
-  /**
-   *
-   * @param {Entity} entity
-   */
-  static showHealthEntity(entity) {
-    if (entity.hasTag("in_match") && entity.typeId == "minecraft:player")
-      return;
-
-    const health = entity.getComponent("minecraft:health");
-    if (health) {
-      const currentHealth = Math.max(0, Math.ceil(health.currentValue));
-      const maxHealth = Math.ceil(health.effectiveMax);
-      let teamNameTag = "";
-      if (entity.hasTag("blue_team")) {
-        teamNameTag = "§9Blue Team\n";
-      } else if (entity.hasTag("red_team")) {
-        teamNameTag = "§cRed Team\n";
-      }
-      entity.nameTag = `${teamNameTag}:heart: ${currentHealth}/${maxHealth}`;
-    }
-  }
-
-  /**
-   *
-   * @param {Dimension} dimension
-   * @param {String} teamKey
-   * @returns  {{ min: {x: number, z: number}, max: {x: number, z: number} }[]}
-   */
-  static getTowerBounds(dimension, teamKey) {
-    const entities = dimension.getEntities({
-      tags: [teamKey],
-      families: ["tower"],
+  //displayers
+  displayTimer(color = "") {
+    PlayerManager.displayTitle((p) => {
+      p.playSound("random.click");
+      return `${color}${this.timer}`;
     });
-    const bounds = [];
-    entities.forEach((e) => {
-      let sizeX = 0;
-      let sizeZ = 0;
-      if (e.typeId == "craft_royale:king_tower") {
-        sizeX = this.kingZoneSize.x;
-        sizeZ = this.kingZoneSize.z;
-      }
-      if (e.typeId == "craft_royale:princess_tower") {
-        sizeX = this.princessZoneSize.x;
-        sizeZ = this.princessZoneSize.z;
-      }
-      const halfX = sizeX * 0.5;
-      const halfZ = sizeZ * 0.5;
-      const pos = e.location;
-      bounds.push({
-        min: {
-          x: pos.x - halfX,
-          z: pos.z - halfZ,
-        },
-        max: {
-          x: pos.x + halfX,
-          z: pos.z + halfZ,
-        },
-      });
-    });
-    return bounds;
   }
 
-  /**
-   *
-   * @param {x: number, z: number} position
-   * @param {{ min: {x: number, z: number}, max: {x: number, z: number} }[]} bounds
-   * @returns {boolean}
-   */
-  static isPositionInsideBounds(position, bounds) {
-    return bounds.some(
-      (b) =>
-        position.x >= b.min.x &&
-        position.x <= b.max.x &&
-        position.z >= b.min.z &&
-        position.z <= b.max.z,
+  displayFight() {
+    PlayerManager.displayTitle((p) => {
+      p.playSound("horn.call.0");
+      return "FIGHT!";
+    });
+  }
+
+  displayCrowns() {
+    PlayerManager.displayTitle(this.crownsLabel);
+  }
+
+  display60SecondsLeft() {
+    PlayerManager.displayTitle(
+      `${TextStyle.LightPurple}60 ${TextStyle.Reset}Seconds Left`,
+      (p) => {
+        p.playSound("note.pling");
+        if (this.playerElixirMultipliers.has(p.id)) {
+          return `${TextStyle.LightPurple}x${this.playerElixirMultipliers.get(p.id)} Elixir`;
+        }
+        return undefined;
+      },
     );
   }
 
-  /**
-   *
-   * @param {Entity} entity
-   */
-  static repositionEntityInArena(entity) {
-    const currentPos = entity.location;
+  display30SecondsLeft() {
+    PlayerManager.displayTitle((p) => {
+      p.playSound("note.pling");
+      return `${TextStyle.Yellow}30 ${TextStyle.Reset}Seconds Left`;
+    });
+  }
 
-    let newX = currentPos.x;
-    let newZ = currentPos.z;
+  displaySuddenDeath() {
+    PlayerManager.displayTitle((p) => {
+      p.playSound("horn.call.2");
+      return `${TextStyle.Red}Sudden Death`;
+    }, "Get next crown to WIN");
+  }
 
-    if (currentPos.x < this.arenaBounds.min.x) {
-      newX = this.arenaBounds.min.x;
-    } else if (currentPos.x > this.arenaBounds.max.x) {
-      newX = this.arenaBounds.max.x;
-    }
+  displayTiebreaker() {
+    PlayerManager.displayTitle(`${TextStyle.Red}Tiebreaker!`, "Who will win?");
+  }
 
-    // Evaluamos el eje Z (corrigiendo el selector a .z)
-    if (currentPos.z < this.arenaBounds.min.z) {
-      newZ = this.arenaBounds.min.z;
-    } else if (currentPos.z > this.arenaBounds.max.z) {
-      newZ = this.arenaBounds.max.z;
-    }
+  displayScoreboard() {
+    ScoreboardManager.display(
+      "craft_royale_scoreboard",
+      `${TextStyle.Bold}${TextStyle.White}<< Craft ${TextStyle.Yellow}Royale >>`,
+      this.scoreboard,
+    );
+  }
 
-    if (newX !== currentPos.x || newZ !== currentPos.z) {
-      entity.teleport({
-        x: newX,
-        y: currentPos.y,
-        z: newZ,
-      });
-    }
+  updateScoreboard() {
+    ScoreboardManager.update("craft_royale_scoreboard", this.scoreboard);
   }
 }

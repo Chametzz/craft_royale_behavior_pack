@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { craftRoyaleCards } = require("./scripts/data/craft_royale_card.js");
+const { CraftRoyaleCard } = require("./scripts/classes/craft_royale_card.js");
 
 const outputDirectory = path.join(
   process.env.APPDATA,
@@ -18,7 +18,7 @@ if (!fs.existsSync(outputDirectory)) {
   fs.mkdirSync(outputDirectory, { recursive: true });
 }
 
-craftRoyaleCards.forEach((item) => {
+CraftRoyaleCard.values.forEach((item) => {
   // Estructura oficial del ítem para Minecraft Bedrock (ej. formato 1.20+)
   const jsonContent = {
     format_version: "1.20.50",
@@ -30,7 +30,7 @@ craftRoyaleCards.forEach((item) => {
       components: {
         "minecraft:icon": item.icon,
         "minecraft:display_name": {
-          value: `[${item.elixirCost}] ${item.name}`,
+          value: `[${item.cost}] ${item.name}`,
         },
         "minecraft:max_stack_size": 1,
       },

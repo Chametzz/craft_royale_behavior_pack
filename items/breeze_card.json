@@ -8,7 +8,7 @@
     "components": {
       "minecraft:icon": "breeze_card",
       "minecraft:display_name": {
-        "value": "[5] Breeze"
+        "value": "[2] Breezes"
       },
       "minecraft:max_stack_size": 1
     }

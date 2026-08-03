@@ -8,7 +8,7 @@
     "components": {
       "minecraft:icon": "lightning_bolt_card",
       "minecraft:display_name": {
-        "value": "[2] Zap"
+        "value": "[2] Lightning Bolt"
       },
       "minecraft:max_stack_size": 1
     }

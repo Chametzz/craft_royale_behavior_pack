@@ -124,7 +124,7 @@ team_properties["craft_royale:team"] = {
 
 team_events["craft_royale:remove_teams"] = {"remove": {"component_groups": []}}
 
-team_components["minecraft:damage_sensor"]["triggers"][0]["on_damage"]["filters"][
+"""team_components["minecraft:damage_sensor"]["triggers"][0]["on_damage"]["filters"][
     "any_of"
 ].append(
     {
@@ -133,7 +133,7 @@ team_components["minecraft:damage_sensor"]["triggers"][0]["on_damage"]["filters"
             {"test": "has_tag", "subject": "other", "value": "spell"},
         ]
     }
-)
+)"""
 
 for t in teams:
     # Evitar fuego amigo

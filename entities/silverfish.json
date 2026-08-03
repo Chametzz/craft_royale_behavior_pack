@@ -105,19 +105,6 @@
                   {
                     "all_of": [
                       {
-                        "test": "is_family",
-                        "value": "tower"
-                      },
-                      {
-                        "test": "has_tag",
-                        "subject": "other",
-                        "value": "spell"
-                      }
-                    ]
-                  },
-                  {
-                    "all_of": [
-                      {
                         "test": "has_tag",
                         "value": "blue_team"
                       },

@@ -8,7 +8,7 @@
     "components": {
       "minecraft:icon": "vex_card",
       "minecraft:display_name": {
-        "value": "[3] Vex"
+        "value": "[2] Vex"
       },
       "minecraft:max_stack_size": 1
     }

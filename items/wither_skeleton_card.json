@@ -8,7 +8,7 @@
     "components": {
       "minecraft:icon": "wither_skeleton_card",
       "minecraft:display_name": {
-        "value": "[2] Whiter Skeleton"
+        "value": "[3] Wither Skeleton"
       },
       "minecraft:max_stack_size": 1
     }

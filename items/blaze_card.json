@@ -8,7 +8,7 @@
     "components": {
       "minecraft:icon": "blaze_card",
       "minecraft:display_name": {
-        "value": "[4] Blazes"
+        "value": "[2] Blazes"
       },
       "minecraft:max_stack_size": 1
     }

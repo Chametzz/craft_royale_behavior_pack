@@ -20,8 +20,8 @@
         "minecraft:ageable": {
           "duration": 1200,
           "feed_items": "wheat",
-          "pause_growth_items": [ "golden_dandelion" ],
-          "reset_growth_items": [ "golden_dandelion" ],
+          "pause_growth_items": ["golden_dandelion"],
+          "reset_growth_items": ["golden_dandelion"],
           "grow_up": {
             "event": "minecraft:ageable_grow_up",
             "target": "self"
@@ -307,6 +307,7 @@
         "speed_multiplier": 0.75,
         "items": ["wheat"]
       },
+
       "minecraft:behavior.nearest_attackable_target": {
         "priority": 6,
         "within_radius": 16,
@@ -355,10 +356,8 @@
       "minecraft:leashable": {},
       "minecraft:balloonable": {},
       "minecraft:physics": {},
-      "minecraft:pushable_by_entity": {
-      },
-      "minecraft:pushable_by_block": {
-      }
+      "minecraft:pushable_by_entity": {},
+      "minecraft:pushable_by_block": {}
     },
     "events": {
       "minecraft:entity_spawned": {

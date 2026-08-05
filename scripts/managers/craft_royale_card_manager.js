@@ -85,7 +85,7 @@ export class CraftRoyaleCardManager {
 
     // Silverfishes
     silverfish: (ctx) => {
-      Array.from({ length: 30 }, () => {
+      Array.from({ length: 24 }, () => {
         const e = ctx.spawnEntity("minecraft:silverfish");
       });
     },
@@ -203,7 +203,7 @@ export class CraftRoyaleCardManager {
 
     // Ghast
     ghast: (ctx) => {
-      Array.from({ length: 2 }, () => {
+      Array.from({ length: 1 }, () => {
         const e = ctx.spawnEntity("minecraft:ghast", {
           x: ctx.location.x,
           y: ctx.location.y + 4,
@@ -246,6 +246,10 @@ export class CraftRoyaleCardManager {
     // Evoker
     evoker: (ctx) => {
       const e = ctx.spawnEntity("minecraft:evocation_illager");
+      e.addTag("coward");
+      e.runCommand(
+        "replaceitem entity @s slot.weapon.mainhand 0 totem_of_undying",
+      );
     },
 
     // Vindicator
@@ -386,6 +390,122 @@ export class CraftRoyaleCardManager {
         e.addTag("air");
         e.addTag("anti_air");
       });
+    },
+
+    kaboom: (ctx) => {
+      const side = 6;
+      const half = side * 0.5;
+      ctx.player.spawnParticle(
+        "minecraft:huge_explosion_emitter",
+        ctx.location,
+      );
+      ctx.player.spawnParticle(
+        "minecraft:fireball_cache_emitter",
+        ctx.location,
+      );
+
+      ctx.player.dimension.playSound("random.explode", ctx.location, {
+        volume: 1.0,
+        pitch: 1.0,
+      });
+      ctx.applyEffect({
+        location: {
+          x: ctx.location.x - half,
+          y: ctx.location.y,
+          z: ctx.location.z - half,
+        },
+        volume: {
+          x: side - 1,
+          y: 0,
+          z: side - 1,
+        },
+        effect: (e) => {
+          if (e.hasTag("tower")) {
+            e.applyDamage(10);
+          }
+          e.applyDamage(40);
+          let dirX = e.location.x - ctx.location.x;
+          let dirZ = e.location.z - ctx.location.z;
+
+          const magnitude = Math.hypot(dirX, dirZ);
+
+          if (magnitude === 0) {
+            const view = e.getViewDirection();
+            dirX = -view.x;
+            dirZ = -view.z;
+          } else {
+            dirX /= magnitude;
+            dirZ /= magnitude;
+          }
+          const strength = 0.4;
+          const force = 3;
+          e.applyKnockback({ x: dirX * force, z: dirZ * force }, strength);
+        },
+        color: {
+          r: 0.89,
+          g: 0.35,
+          b: 0.13,
+        },
+        includeTowers: true,
+      });
+    },
+
+    poison: (ctx) => {
+      const side = 10;
+      const half = side * 0.5;
+
+      ctx.applyEffect({
+        location: {
+          x: ctx.location.x - half,
+          y: ctx.location.y,
+          z: ctx.location.z - half,
+        },
+        volume: {
+          x: side - 1,
+          y: 0,
+          z: side - 1,
+        },
+        effect: (e) => {
+          if (e.hasTag("tower")) {
+            e.applyDamage(1);
+          }
+          e.applyDamage(3);
+          e.addEffect("slowness", 30);
+          e.addEffect("poison", 30, {
+            amplifier: 10,
+          });
+        },
+        color: { r: 0, g: 1, b: 0 },
+        ticks: 20,
+        repetitions: 8,
+        includeTowers: true,
+      });
+    },
+
+    camel_husk: (ctx) => {
+      const e = ctx.spawnEntity("minecraft:camel_husk");
+      const rider1 = ctx.spawnEntity("minecraft:husk");
+      const rider2 = ctx.spawnEntity("minecraft:parched");
+
+      e.addTag("win_condition");
+      rider1.addTag("win_condition");
+      rider1.runCommand(
+        "replaceitem entity @s slot.weapon.mainhand 0 iron_spear",
+      );
+      rider1.triggerEvent("minecraft:spawn_as_rider");
+      rider2.addTag("win_condition");
+
+      const rideable = e.getComponent("minecraft:rideable");
+      if (rideable) {
+        rideable.addRider(rider1);
+        rideable.addRider(rider2);
+      }
+    },
+
+    frog: (ctx) => {
+      const e = ctx.spawnEntity("minecraft:frog");
+      e.addTag("skiptower");
+      e.addTag("anti_air");
     },
   };
 

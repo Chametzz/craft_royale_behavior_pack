@@ -20,7 +20,42 @@ teams: list[Team] = [
     Team("red_team", 1),
 ]
 
-ATTACK_COMPONENTS_TO_REMOVE = [
+COMPONENTS_TO_CONFIG = {
+    "minecraft:angry": {},
+    "minecraft:behavior.ram_attack": {
+        "priority": 1,
+        "run_speed": 0.7,
+        "ram_speed": 3,
+        "min_ram_distance": 1,
+        "ram_distance": 128,
+        "knockback_force": 64,
+        "knockback_height": 0.04,
+        "pre_ram_sound": "pre_ram",
+        "ram_impact_sound": "ram_impact",
+        "cooldown_range": {"min": 1, "max": 2},
+        "on_start": [{"event": "start_event", "target": "self"}],
+    },
+    "minecraft:behavior.eat_mob": {
+        "run_speed": 2,
+        "eat_animation_time": 0.3,
+        "pull_in_force": 2.5,
+        "reach_mob_distance": 6,
+        "eat_mob_sound": "tongue",
+        "loot_table": "loot_tables/entities/frog.json",
+        "priority": 0,
+    },
+    "attack_cooldown": {
+        "minecraft:attack_cooldown": {
+            "attack_cooldown_time": [1, 2],
+            "attack_cooldown_complete_event": {
+                "event": "attack_cooldown_complete_event",
+                "target": "self",
+            },
+        }
+    },
+}
+
+COMPONENTS_TO_REMOVE = [
     "minecraft:behavior.nearest_attackable_target",
     "minecraft:behavior.hurt_by_target",
     "minecraft:behavior.defend_trusted_target",
@@ -36,9 +71,9 @@ ATTACK_COMPONENTS_TO_REMOVE = [
     "minecraft:behavior.avoid_mob_type",
     "minecraft:behavior.nearest_attackable_target_or_retaliate",
     "minecraft:damage_condition",
-    "minecraft:angry",
     "minecraft:behavior.panic",
     "minecraft:experience_reward",
+    "minecraft:behavior.avoid_block",
 ]
 
 team_components = {}
@@ -56,7 +91,7 @@ team_components["minecraft:damage_sensor"] = {
 }
 
 team_components["minecraft:behavior.nearest_attackable_target"] = {
-    "priority": 1,
+    "priority": 0,
     "must_see": False,
     "reselect_targets": True,
     "target_search_height": 80,
@@ -82,12 +117,30 @@ team_components["minecraft:behavior.nearest_attackable_target"]["entity_types"][
                 },
             ]
         },
+        # CASO 2: Tiene la tag 'skiptower' (Ataca todo MENOS a la family 'tower')
+        {
+            "all_of": [
+                {"test": "has_tag", "value": "skiptower"},
+                {
+                    "test": "is_family",
+                    "operator": "!=",
+                    "subject": "other",
+                    "value": "tower",
+                },
+            ]
+        },
+        # CASO 3: Tropas Anti-Aire (No win_condition, no skiptower)
         {
             "all_of": [
                 {
                     "test": "has_tag",
                     "operator": "!=",
                     "value": "win_condition",
+                },
+                {
+                    "test": "has_tag",
+                    "operator": "!=",
+                    "value": "skiptower",
                 },
                 {"test": "has_tag", "value": "anti_air"},
                 {
@@ -97,12 +150,18 @@ team_components["minecraft:behavior.nearest_attackable_target"]["entity_types"][
                 },
             ]
         },
+        # CASO 4: Tropas Terrestres Normales (No win_condition, no skiptower, no objetivo aire)
         {
             "all_of": [
                 {
                     "test": "has_tag",
                     "operator": "!=",
                     "value": "win_condition",
+                },
+                {
+                    "test": "has_tag",
+                    "operator": "!=",
+                    "value": "skiptower",
                 },
                 {
                     "test": "has_tag",
@@ -114,6 +173,47 @@ team_components["minecraft:behavior.nearest_attackable_target"]["entity_types"][
         },
     ]
 )
+
+avoid_entity_types = []
+for t in teams:
+    for enemy_team in teams:
+        if enemy_team.key != t.key:
+            avoid_entity_types.append(
+                {
+                    "filters": {
+                        "all_of": [
+                            {"test": "has_tag", "value": "coward"},  # Yo soy coward
+                            {"test": "has_tag", "value": t.key},  # Mi equipo
+                            {
+                                "test": "is_family",
+                                "operator": "!=",
+                                "subject": "other",
+                                "value": "tower",
+                            },
+                            {
+                                "test": "has_tag",
+                                "subject": "other",
+                                "value": enemy_team.key,
+                            },  # Equipo enemigo
+                            {
+                                "test": "has_tag",
+                                "subject": "other",
+                                "value": "in_match",
+                            },  # Está en partida
+                        ]
+                    },
+                    "max_dist": 16,
+                }
+            )
+
+team_components["minecraft:behavior.avoid_mob_type"] = {
+    "priority": 1,
+    "max_dist": 4,
+    "walk_speed_multiplier": 1.2,
+    "sprint_speed_multiplier": 1.5,
+    "entity_types": avoid_entity_types,
+}
+
 team_components["minecraft:nameable"] = {"always_show": True}
 team_properties["craft_royale:team"] = {
     "type": "int",
@@ -166,20 +266,26 @@ for t in teams:
     )
 
 
+def apply_component_configs(comp_dict: dict):
+    """Aplica configuraciones personalizadas/modificaciones a componentes si existen."""
+    for comp_name, rules in COMPONENTS_TO_CONFIG.items():
+        if comp_name in comp_dict and isinstance(comp_dict[comp_name], dict):
+            for key, val in rules.items():
+                if val is None:
+                    comp_dict[comp_name].pop(key, None)
+                else:
+                    comp_dict[comp_name][key] = val
+
+
 def clean_components(comp_dict: dict):
-    """Limpia componentes indeseados e inhabilita el temporizador de calma en 'minecraft:angry'."""
-    # 1. Eliminar componentes de ataque u hostilidad vanilla
-    for comp in ATTACK_COMPONENTS_TO_REMOVE:
+    apply_component_configs(comp_dict)
+
+    for comp in COMPONENTS_TO_REMOVE:
         comp_dict.pop(comp, None)
 
-    # 2. Desactivar la des-agresividad en 'minecraft:angry'
-    if "minecraft:angry" in comp_dict and isinstance(
-        comp_dict["minecraft:angry"], dict
-    ):
-        angry_data = comp_dict["minecraft:angry"]
-        angry_data.pop("calm_event", None)
-        angry_data.pop("duration", None)
-        angry_data.pop("duration_delta", None)
+    for key, newComp in COMPONENTS_TO_CONFIG.items():
+        if key in comp_dict:
+            comp_dict[key] = newComp
 
 
 # procesar

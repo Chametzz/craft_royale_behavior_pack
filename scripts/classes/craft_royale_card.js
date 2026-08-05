@@ -40,7 +40,7 @@ export class CraftRoyaleCard {
   static snowGolem = new CraftRoyaleCard({
     key: "snow_golem",
     cost: 1,
-    name: "Zombies",
+    name: "Snow Golems",
   });
   static witch = new CraftRoyaleCard({
     key: "witch",
@@ -82,7 +82,7 @@ export class CraftRoyaleCard {
   });
   static ghast = new CraftRoyaleCard({
     key: "ghast",
-    cost: 2,
+    cost: 3,
     name: "Ghast",
   });
   static ravager = new CraftRoyaleCard({
@@ -170,6 +170,33 @@ export class CraftRoyaleCard {
     cost: 2,
     name: "Bees",
   });
+  static goat = new CraftRoyaleCard({
+    key: "goat",
+    cost: 1,
+    name: "Goats",
+  });
+  static kaboom = new CraftRoyaleCard({
+    key: "kaboom",
+    cost: 4,
+    name: "Kaboom",
+    enemySide: true,
+  });
+  static poison = new CraftRoyaleCard({
+    key: "poison",
+    cost: 4,
+    name: "Poison",
+    enemySide: true,
+  });
+  static camelHusk = new CraftRoyaleCard({
+    key: "camel_husk",
+    cost: 4,
+    name: "Camel Husk",
+  });
+  static frog = new CraftRoyaleCard({
+    key: "frog",
+    cost: 1,
+    name: "Frog",
+  });
 
   /**
    *
@@ -219,6 +246,10 @@ export class CraftRoyaleCard {
       this.breeze,
       this.phantom,
       this.bee,
+      this.kaboom,
+      this.poison,
+      this.camelHusk,
+      this.frog,
     ];
   }
 

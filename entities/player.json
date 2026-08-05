@@ -8,6 +8,49 @@
       "spawn_category": "creature"
     },
     "components": {
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "on_damage": {
+              "filters": {
+                "any_of": [
+                  {
+                    "all_of": [
+                      {
+                        "test": "has_tag",
+                        "value": "blue_team"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "blue_team"
+                      }
+                    ]
+                  },
+                  {
+                    "all_of": [
+                      {
+                        "test": "has_tag",
+                        "value": "red_team"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "red_team"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "deals_damage": "no"
+          },
+          {
+            "cause": "fall",
+            "deals_damage": "no"
+          }
+        ]
+      },
       "minecraft:attack": {
         "damage": 1
       },
@@ -118,13 +161,11 @@
               "domain": "minecraft:sulfur_cube_archetype",
               "value": "bouncy"
             },
+            "knockback_mode": "relative_horizontal",
             "horizontal_power": 0.4125,
             "vertical_power": 0.105,
             "vertical_velocity_cap": 8.0,
-            "scale_previous_velocity": 1.0,
-            "horizontal_hit_angle_scale": 1.6,
-            "vertical_hit_angle_scale": 0.5,
-            "vertical_position_angle_scale": 0.8,
+            "slowdown_scale": 1.0,
             "scale_with_damage": true,
             "extra_knockback_approach": "multiply_reduced"
           },
@@ -135,13 +176,11 @@
               "domain": "minecraft:sulfur_cube_archetype",
               "value": "regular"
             },
+            "knockback_mode": "relative_horizontal",
             "horizontal_power": 0.4125,
             "vertical_power": 0.105,
             "vertical_velocity_cap": 8.0,
-            "scale_previous_velocity": 1.0,
-            "horizontal_hit_angle_scale": 1.6,
-            "vertical_hit_angle_scale": 0.5,
-            "vertical_position_angle_scale": 0.8,
+            "slowdown_scale": 1.0,
             "scale_with_damage": true,
             "extra_knockback_approach": "multiply_reduced"
           },
@@ -152,13 +191,11 @@
               "domain": "minecraft:sulfur_cube_archetype",
               "value": "slow_bouncy"
             },
+            "knockback_mode": "relative_horizontal",
             "horizontal_power": 0.4125,
             "vertical_power": 0.24,
             "vertical_velocity_cap": 8.0,
-            "scale_previous_velocity": 1.0,
-            "horizontal_hit_angle_scale": 1.6,
-            "vertical_hit_angle_scale": 0.5,
-            "vertical_position_angle_scale": 0.8,
+            "slowdown_scale": 1.0,
             "scale_with_damage": true,
             "extra_knockback_approach": "multiply_reduced"
           },
@@ -169,13 +206,11 @@
               "domain": "minecraft:sulfur_cube_archetype",
               "value": "slow_flat"
             },
+            "knockback_mode": "relative_horizontal",
             "horizontal_power": 0.4125,
             "vertical_power": 0.105,
             "vertical_velocity_cap": 8.0,
-            "scale_previous_velocity": 1.0,
-            "horizontal_hit_angle_scale": 1.6,
-            "vertical_hit_angle_scale": 0.5,
-            "vertical_position_angle_scale": 0.8,
+            "slowdown_scale": 1.0,
             "scale_with_damage": true,
             "extra_knockback_approach": "multiply_reduced"
           },
@@ -186,13 +221,11 @@
               "domain": "minecraft:sulfur_cube_archetype",
               "value": "fast_flat"
             },
+            "knockback_mode": "relative_horizontal",
             "horizontal_power": 0.9125,
             "vertical_power": 0.09,
             "vertical_velocity_cap": 8.0,
-            "scale_previous_velocity": 1.0,
-            "horizontal_hit_angle_scale": 1.6,
-            "vertical_hit_angle_scale": 0.5,
-            "vertical_position_angle_scale": 0.8,
+            "slowdown_scale": 1.0,
             "scale_with_damage": true,
             "extra_knockback_approach": "multiply_reduced"
           },
@@ -203,13 +236,11 @@
               "domain": "minecraft:sulfur_cube_archetype",
               "value": "light"
             },
+            "knockback_mode": "relative_horizontal",
             "horizontal_power": 0.4125,
             "vertical_power": 0.18,
             "vertical_velocity_cap": 8.0,
-            "scale_previous_velocity": 1.0,
-            "horizontal_hit_angle_scale": 1.6,
-            "vertical_hit_angle_scale": 0.5,
-            "vertical_position_angle_scale": 0.8,
+            "slowdown_scale": 1.0,
             "scale_with_damage": true,
             "extra_knockback_approach": "multiply_reduced"
           },
@@ -220,13 +251,11 @@
               "domain": "minecraft:sulfur_cube_archetype",
               "value": "fast_sliding"
             },
+            "knockback_mode": "relative_horizontal",
             "horizontal_power": 0.6625,
             "vertical_power": 0.09,
             "vertical_velocity_cap": 8.0,
-            "scale_previous_velocity": 1.0,
-            "horizontal_hit_angle_scale": 1.6,
-            "vertical_hit_angle_scale": 0.5,
-            "vertical_position_angle_scale": 0.8,
+            "slowdown_scale": 1.0,
             "scale_with_damage": true,
             "extra_knockback_approach": "multiply_reduced"
           },
@@ -237,13 +266,11 @@
               "domain": "minecraft:sulfur_cube_archetype",
               "value": "slow_sliding"
             },
+            "knockback_mode": "relative_horizontal",
             "horizontal_power": 0.4125,
             "vertical_power": 0.09,
             "vertical_velocity_cap": 8.0,
-            "scale_previous_velocity": 1.0,
-            "horizontal_hit_angle_scale": 1.6,
-            "vertical_hit_angle_scale": 0.5,
-            "vertical_position_angle_scale": 0.8,
+            "slowdown_scale": 1.0,
             "scale_with_damage": true,
             "extra_knockback_approach": "multiply_reduced"
           },
@@ -254,13 +281,11 @@
               "domain": "minecraft:sulfur_cube_archetype",
               "value": "sticky"
             },
+            "knockback_mode": "relative_horizontal",
             "horizontal_power": 0.4125,
             "vertical_power": 0.09,
             "vertical_velocity_cap": 8.0,
-            "scale_previous_velocity": 1.0,
-            "horizontal_hit_angle_scale": 1.6,
-            "vertical_hit_angle_scale": 0.5,
-            "vertical_position_angle_scale": 0.8,
+            "slowdown_scale": 1.0,
             "scale_with_damage": true,
             "extra_knockback_approach": "multiply_reduced"
           },
@@ -271,13 +296,11 @@
               "domain": "minecraft:sulfur_cube_archetype",
               "value": "high_resistance"
             },
+            "knockback_mode": "relative_horizontal",
             "horizontal_power": 0.4125,
             "vertical_power": 0.09,
             "vertical_velocity_cap": 8.0,
-            "scale_previous_velocity": 1.0,
-            "horizontal_hit_angle_scale": 1.6,
-            "vertical_hit_angle_scale": 0.5,
-            "vertical_position_angle_scale": 0.8,
+            "slowdown_scale": 1.0,
             "scale_with_damage": true,
             "extra_knockback_approach": "multiply_reduced"
           },
@@ -288,13 +311,11 @@
               "domain": "minecraft:sulfur_cube_archetype",
               "value": "explosive"
             },
+            "knockback_mode": "relative_horizontal",
             "horizontal_power": 0.4125,
             "vertical_power": 0.09,
             "vertical_velocity_cap": 8.0,
-            "scale_previous_velocity": 1.0,
-            "horizontal_hit_angle_scale": 1.6,
-            "vertical_hit_angle_scale": 0.5,
-            "vertical_position_angle_scale": 0.8,
+            "slowdown_scale": 1.0,
             "scale_with_damage": true,
             "extra_knockback_approach": "multiply_reduced"
           },
@@ -305,13 +326,11 @@
               "domain": "minecraft:sulfur_cube_archetype",
               "value": "hot"
             },
+            "knockback_mode": "relative_horizontal",
             "horizontal_power": 0.4125,
             "vertical_power": 0.105,
             "vertical_velocity_cap": 8.0,
-            "scale_previous_velocity": 1.0,
-            "horizontal_hit_angle_scale": 1.6,
-            "vertical_hit_angle_scale": 0.5,
-            "vertical_position_angle_scale": 0.8,
+            "slowdown_scale": 1.0,
             "scale_with_damage": true,
             "extra_knockback_approach": "multiply_reduced"
           }
@@ -341,94 +360,6 @@
       }
     },
     "component_groups": {
-      "craft_royale:blue_team": {
-        "minecraft:type_family": {
-          "family": ["player", "light", "blue_team"]
-        },
-        "minecraft:damage_sensor": {
-          "triggers": [
-            {
-              "on_damage": {
-                "filters": {
-                  "any_of": [
-                    {
-                      "all_of": [
-                        {
-                          "test": "has_tag",
-                          "value": "blue_team"
-                        },
-                        {
-                          "test": "has_tag",
-                          "subject": "other",
-                          "value": "blue_team"
-                        }
-                      ]
-                    },
-                    {
-                      "all_of": [
-                        {
-                          "test": "is_family",
-                          "value": "blue_team"
-                        },
-                        {
-                          "test": "is_family",
-                          "subject": "other",
-                          "value": "blue_team"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              },
-              "deals_damage": "no"
-            }
-          ]
-        }
-      },
-      "craft_royale:red_team": {
-        "minecraft:type_family": {
-          "family": ["player", "light", "red_team"]
-        },
-        "minecraft:damage_sensor": {
-          "triggers": [
-            {
-              "on_damage": {
-                "filters": {
-                  "any_of": [
-                    {
-                      "all_of": [
-                        {
-                          "test": "has_tag",
-                          "value": "red_team"
-                        },
-                        {
-                          "test": "has_tag",
-                          "subject": "other",
-                          "value": "red_team"
-                        }
-                      ]
-                    },
-                    {
-                      "all_of": [
-                        {
-                          "test": "is_family",
-                          "value": "red_team"
-                        },
-                        {
-                          "test": "is_family",
-                          "subject": "other",
-                          "value": "red_team"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              },
-              "deals_damage": "no"
-            }
-          ]
-        }
-      },
       "minecraft:add_raid_omen": {
         "minecraft:spell_effects": {
           "add_effects": [
@@ -462,30 +393,6 @@
       }
     },
     "events": {
-      "craft_royale:add_blue_team": {
-        "remove": {
-          "component_groups": ["craft_royale:red_team"]
-        },
-        "add": {
-          "component_groups": ["craft_royale:blue_team"]
-        }
-      },
-      "craft_royale:add_red_team": {
-        "remove": {
-          "component_groups": ["craft_royale:blue_team"]
-        },
-        "add": {
-          "component_groups": ["craft_royale:red_team"]
-        }
-      },
-      "craft_royale:remove_teams": {
-        "remove": {
-          "component_groups": [
-            "craft_royale:blue_team",
-            "craft_royale:red_team"
-          ]
-        }
-      },
       "minecraft:clear_add_raid_omen": {
         "add": {
           "component_groups": ["minecraft:clear_raid_omen_spell_effect"]

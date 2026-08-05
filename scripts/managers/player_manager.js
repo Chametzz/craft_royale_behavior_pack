@@ -1,4 +1,4 @@
-import { Player, world } from "@minecraft/server";
+import { ItemLockMode, Player, world } from "@minecraft/server";
 
 export class PlayerManager {
   /**
@@ -20,7 +20,8 @@ export class PlayerManager {
 
       if (subtitleText !== undefined) {
         p.onScreenDisplay.updateSubtitle(subtitleText);
-      } else if (titleText !== undefined) {
+      }
+      if (titleText !== undefined) {
         p.onScreenDisplay.setTitle(titleText);
       }
     }
@@ -42,5 +43,23 @@ export class PlayerManager {
     player.extinguishFire();
     player.resetLevel();
     player.runCommand("effect @s clear");
+  }
+
+  static lockInventory(player) {
+    if (!player || !player.isValid) return;
+
+    const inventory = player.getComponent("minecraft:inventory");
+    if (!inventory || !inventory.container) return;
+
+    const container = inventory.container;
+
+    for (let slot = 0; slot < container.size; slot++) {
+      const item = container.getItem(slot);
+
+      if (item) {
+        item.lockMode = ItemLockMode.slot;
+        container.setItem(slot, item);
+      }
+    }
   }
 }

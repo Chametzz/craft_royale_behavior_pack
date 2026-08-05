@@ -178,7 +178,7 @@
         ]
       },
       "minecraft:behavior.nearest_attackable_target": {
-        "priority": 1,
+        "priority": 0,
         "must_see": false,
         "reselect_targets": true,
         "target_search_height": 80,
@@ -215,8 +215,27 @@
                       "all_of": [
                         {
                           "test": "has_tag",
+                          "value": "skiptower"
+                        },
+                        {
+                          "test": "is_family",
+                          "operator": "!=",
+                          "subject": "other",
+                          "value": "tower"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
                           "operator": "!=",
                           "value": "win_condition"
+                        },
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "skiptower"
                         },
                         {
                           "test": "has_tag",
@@ -235,6 +254,11 @@
                           "test": "has_tag",
                           "operator": "!=",
                           "value": "win_condition"
+                        },
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "skiptower"
                         },
                         {
                           "test": "has_tag",
@@ -289,6 +313,76 @@
               ]
             },
             "max_dist": 128
+          }
+        ]
+      },
+      "minecraft:behavior.avoid_mob_type": {
+        "priority": 1,
+        "max_dist": 4,
+        "walk_speed_multiplier": 1.2,
+        "sprint_speed_multiplier": 1.5,
+        "entity_types": [
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "test": "has_tag",
+                  "value": "coward"
+                },
+                {
+                  "test": "has_tag",
+                  "value": "blue_team"
+                },
+                {
+                  "test": "is_family",
+                  "operator": "!=",
+                  "subject": "other",
+                  "value": "tower"
+                },
+                {
+                  "test": "has_tag",
+                  "subject": "other",
+                  "value": "red_team"
+                },
+                {
+                  "test": "has_tag",
+                  "subject": "other",
+                  "value": "in_match"
+                }
+              ]
+            },
+            "max_dist": 16
+          },
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "test": "has_tag",
+                  "value": "coward"
+                },
+                {
+                  "test": "has_tag",
+                  "value": "red_team"
+                },
+                {
+                  "test": "is_family",
+                  "operator": "!=",
+                  "subject": "other",
+                  "value": "tower"
+                },
+                {
+                  "test": "has_tag",
+                  "subject": "other",
+                  "value": "blue_team"
+                },
+                {
+                  "test": "has_tag",
+                  "subject": "other",
+                  "value": "in_match"
+                }
+              ]
+            },
+            "max_dist": 16
           }
         ]
       }
@@ -401,7 +495,9 @@
       "minecraft:raid_persistence": {
         "minecraft:persistent": {}
       },
-      "minecraft:vindicator_aggro": {},
+      "minecraft:vindicator_aggro": {
+        "minecraft:angry": {}
+      },
       "minecraft:vindicator_johnny": {}
     },
     "events": {

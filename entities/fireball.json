@@ -2,8 +2,8 @@
   "format_version": "1.26.0",
   "minecraft:entity": {
     "description": {
-      "identifier": "minecraft:breeze_wind_charge_projectile",
-      "is_summonable": false,
+      "identifier": "minecraft:fireball",
+      "is_summonable": true,
       "is_spawnable": false,
       "properties": {
         "craft_royale:team": {
@@ -19,8 +19,8 @@
     },
     "components": {
       "minecraft:collision_box": {
-        "height": 0.3125,
-        "width": 0.3125
+        "height": 1.0,
+        "width": 1.0
       },
       "minecraft:conditional_bandwidth_optimization": {
         "default_values": {
@@ -29,51 +29,42 @@
           "use_motion_prediction_hints": true
         }
       },
-      "minecraft:explode": {
-        "knockback_scaling": 0.6,
-        "damage_scaling": 0,
-        "allow_underwater": true,
-        "breaks_blocks": false,
-        "causes_fire": false,
-        "max_resistance": 0,
-        "negates_fall_damage": false,
-        "particle_effect": "breeze_wind_burst",
-        "toggles_blocks": true,
-        "power": 3.0,
-        "sound_effect": "breeze_wind_charge.burst"
-      },
+      "minecraft:dimension_bound": {},
       "minecraft:physics": {},
       "minecraft:projectile": {
+        "anchor": 2,
         "gravity": 0.0,
-        "uncertainty_base": 5.0,
-        "inertia": 1.0,
-        "ignored_entities": [
-          "ender_crystal",
-          "wind_charge_projectile",
-          "breeze_wind_charge_projectile"
-        ],
-        "liquid_inertia": 1.0,
+        "catch_fire": true,
+        "inertia": 1,
+        "liquid_inertia": 1,
         "on_hit": {
+          "definition_event": {
+            "affect_projectile": true,
+            "event_trigger": {
+              "event": "minecraft:explode",
+              "target": "self"
+            }
+          },
           "impact_damage": {
             "apply_knockback_to_blocking_targets": true,
-            "damage": 1,
-            "knockback": true
-          },
-          "wind_burst_on_hit": {}
+            "damage": 6,
+            "knockback": false,
+            "semi_random_diff_damage": false
+          }
         },
+        "offset": [
+          0,
+          -1.5,
+          0
+        ],
+        "power": 1.6,
         "reflect_on_hurt": true,
-        "power": 0.7,
-        "uncertainty_multiplier": 4.0
+        "uncertainty_base": 0,
+        "uncertainty_multiplier": 0
       },
       "minecraft:pushable": {
-        "is_pushable": false,
+        "is_pushable": true,
         "is_pushable_by_piston": true
-      },
-      "minecraft:type_family": {
-        "family": [
-          "wind_charge",
-          "wind_charge_projectile"
-        ]
       },
       "minecraft:follow_range": {
         "value": 128,
@@ -335,13 +326,31 @@
         "always_show": true
       }
     },
+    "component_groups": {
+      "minecraft:exploding": {
+        "minecraft:explode": {
+          "causes_fire": true,
+          "fire_affected_by_griefing": true,
+          "fuse_lit": true,
+          "power": 1,
+          "destroy_affected_by_griefing": true,
+          "fuse_length": 0
+        }
+      }
+    },
     "events": {
+      "minecraft:explode": {
+        "add": {
+          "component_groups": [
+            "minecraft:exploding"
+          ]
+        }
+      },
       "craft_royale:remove_teams": {
         "remove": {
           "component_groups": []
         }
       }
-    },
-    "component_groups": {}
+    }
   }
 }

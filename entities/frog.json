@@ -1,0 +1,777 @@
+{
+  "format_version": "1.26.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "minecraft:frog",
+      "is_summonable": true,
+      "is_spawnable": true,
+      "spawn_category": "creature",
+      "properties": {
+        "craft_royale:team": {
+          "type": "int",
+          "default": 0,
+          "client_sync": true,
+          "range": [
+            0,
+            1
+          ]
+        }
+      }
+    },
+    "components": {
+      "minecraft:behavior.breed": {
+        "priority": 4
+      },
+      "minecraft:behavior.croak": {
+        "duration": 4.5,
+        "filters": {
+          "all_of": [
+            {
+              "test": "in_water",
+              "value": false
+            },
+            {
+              "test": "in_lava",
+              "value": false
+            }
+          ]
+        },
+        "interval": [
+          10,
+          20
+        ],
+        "priority": 9
+      },
+      "minecraft:behavior.eat_mob": {
+        "run_speed": 2,
+        "eat_animation_time": 0.3,
+        "pull_in_force": 2.5,
+        "reach_mob_distance": 6,
+        "eat_mob_sound": "tongue",
+        "loot_table": "loot_tables/entities/frog.json",
+        "priority": 0
+      },
+      "minecraft:behavior.jump_to_block": {
+        "cooldown_range": [
+          5,
+          7
+        ],
+        "priority": 10,
+        "max_velocity": 1,
+        "forbidden_blocks": [
+          "minecraft:water"
+        ],
+        "minimum_distance": 1,
+        "minimum_path_length": 2,
+        "preferred_blocks": [
+          "minecraft:waterlily",
+          "minecraft:big_dripleaf"
+        ],
+        "preferred_blocks_chance": 0.5,
+        "scale_factor": 0.6,
+        "search_height": 4,
+        "search_width": 8
+      },
+      "minecraft:behavior.look_at_player": {
+        "look_distance": 6,
+        "priority": 12
+      },
+      "minecraft:behavior.move_to_land": {
+        "goal_radius": 2,
+        "priority": 6,
+        "search_count": 80,
+        "search_height": 8,
+        "search_range": 30
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 11
+      },
+      "minecraft:behavior.tempt": {
+        "can_tempt_vertically": true,
+        "items": [
+          "slime_ball"
+        ],
+        "priority": 5,
+        "speed_multiplier": 1.25
+      },
+      "minecraft:breathable": {
+        "breathes_air": true,
+        "breathes_water": true,
+        "suffocate_time": 0,
+        "generates_bubbles": false,
+        "total_supply": 15
+      },
+      "minecraft:breedable": {
+        "breed_items": [
+          "slime_ball"
+        ],
+        "breeds_with": {
+          "minecraft:frog": {
+            "event": "become_pregnant",
+            "target": "self"
+          }
+        },
+        "causes_pregnancy": true,
+        "require_tame": false
+      },
+      "minecraft:collision_box": {
+        "height": 0.55,
+        "width": 0.5
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "on_damage": {
+              "filters": {
+                "any_of": [
+                  {
+                    "all_of": [
+                      {
+                        "test": "has_tag",
+                        "value": "blue_team"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "blue_team"
+                      }
+                    ]
+                  },
+                  {
+                    "all_of": [
+                      {
+                        "test": "has_tag",
+                        "value": "red_team"
+                      },
+                      {
+                        "test": "has_tag",
+                        "subject": "other",
+                        "value": "red_team"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "deals_damage": "no"
+          },
+          {
+            "cause": "fall",
+            "deals_damage": "no"
+          }
+        ]
+      },
+      "minecraft:health": {
+        "value": 10
+      },
+      "minecraft:hurt_on_condition": {
+        "damage_conditions": [
+          {
+            "cause": "lava",
+            "damage_per_tick": 4,
+            "filters": {
+              "operator": "==",
+              "test": "in_lava",
+              "subject": "self",
+              "value": true
+            }
+          }
+        ]
+      },
+      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:jump.static": {},
+      "minecraft:leashable": {},
+      "minecraft:leashable_to": {},
+      "minecraft:movement": {
+        "value": 0.1
+      },
+      "minecraft:movement.amphibious": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
+      "minecraft:navigation.generic": {
+        "avoid_damage_blocks": true,
+        "can_path_over_water": true,
+        "can_sink": false,
+        "can_swim": true,
+        "can_walk": true,
+        "is_amphibious": true
+      },
+      "minecraft:offspring": {
+        "offspring_pairs": {
+          "minecraft:frog": "minecraft:tadpole"
+        }
+      },
+      "minecraft:physics": {},
+      "minecraft:pushable": {},
+      "minecraft:spawn_egg_interaction": {},
+      "minecraft:type_family": {
+        "family": [
+          "frog",
+          "mob"
+        ]
+      },
+      "minecraft:underwater_movement": {
+        "value": 0.15
+      },
+      "minecraft:follow_range": {
+        "value": 128,
+        "max": 128
+      },
+      "minecraft:behavior.nearest_attackable_target": {
+        "priority": 0,
+        "must_see": false,
+        "reselect_targets": true,
+        "target_search_height": 80,
+        "within_radius": 64,
+        "entity_types": [
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "win_condition"
+                        },
+                        {
+                          "any_of": [
+                            {
+                              "test": "has_tag",
+                              "subject": "other",
+                              "value": "buildings"
+                            },
+                            {
+                              "test": "is_family",
+                              "subject": "other",
+                              "value": "tower"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "skiptower"
+                        },
+                        {
+                          "test": "is_family",
+                          "operator": "!=",
+                          "subject": "other",
+                          "value": "tower"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "win_condition"
+                        },
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "skiptower"
+                        },
+                        {
+                          "test": "has_tag",
+                          "value": "anti_air"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "air"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "win_condition"
+                        },
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "value": "skiptower"
+                        },
+                        {
+                          "test": "has_tag",
+                          "operator": "!=",
+                          "subject": "other",
+                          "value": "air"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "in_match"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "in_match"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "max_dist": 128
+          }
+        ]
+      },
+      "minecraft:behavior.avoid_mob_type": {
+        "priority": 1,
+        "max_dist": 4,
+        "walk_speed_multiplier": 1.2,
+        "sprint_speed_multiplier": 1.5,
+        "entity_types": [
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "test": "has_tag",
+                  "value": "coward"
+                },
+                {
+                  "test": "has_tag",
+                  "value": "blue_team"
+                },
+                {
+                  "test": "is_family",
+                  "operator": "!=",
+                  "subject": "other",
+                  "value": "tower"
+                },
+                {
+                  "test": "has_tag",
+                  "subject": "other",
+                  "value": "red_team"
+                },
+                {
+                  "test": "has_tag",
+                  "subject": "other",
+                  "value": "in_match"
+                }
+              ]
+            },
+            "max_dist": 16
+          },
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "test": "has_tag",
+                  "value": "coward"
+                },
+                {
+                  "test": "has_tag",
+                  "value": "red_team"
+                },
+                {
+                  "test": "is_family",
+                  "operator": "!=",
+                  "subject": "other",
+                  "value": "tower"
+                },
+                {
+                  "test": "has_tag",
+                  "subject": "other",
+                  "value": "blue_team"
+                },
+                {
+                  "test": "has_tag",
+                  "subject": "other",
+                  "value": "in_match"
+                }
+              ]
+            },
+            "max_dist": 16
+          }
+        ]
+      }
+    },
+    "component_groups": {
+      "cold_frog": {
+        "minecraft:variant": {
+          "value": 1
+        }
+      },
+      "pregnant": {
+        "minecraft:behavior.lay_egg": {
+          "allow_laying_from_below": true,
+          "lay_seconds": 2,
+          "egg_type": "minecraft:frog_spawn",
+          "search_height": 3,
+          "priority": 2,
+          "goal_radius": 1.7,
+          "lay_egg_sound": "lay_spawn",
+          "on_lay": {
+            "event": "laid_egg",
+            "target": "self"
+          },
+          "search_range": 10,
+          "use_default_animation": false,
+          "speed_multiplier": 1.0,
+          "target_blocks": [
+            "minecraft:water"
+          ],
+          "target_materials_above_block": [
+            "Air"
+          ]
+        },
+        "minecraft:behavior.move_to_water": {
+          "goal_radius": 1.5,
+          "priority": 3,
+          "search_height": 5,
+          "search_range": 20
+        }
+      },
+      "temperate_frog": {
+        "minecraft:variant": {
+          "value": 0
+        }
+      },
+      "warm_frog": {
+        "minecraft:variant": {
+          "value": 2
+        }
+      }
+    },
+    "events": {
+      "spawn_warm": {
+        "add": {
+          "component_groups": [
+            "warm_frog"
+          ]
+        }
+      },
+      "become_pregnant": {
+        "add": {
+          "component_groups": [
+            "pregnant"
+          ]
+        }
+      },
+      "laid_egg": {
+        "remove": {
+          "component_groups": [
+            "pregnant"
+          ]
+        }
+      },
+      "spawn_temperate": {
+        "add": {
+          "component_groups": [
+            "temperate_frog"
+          ]
+        }
+      },
+      "minecraft:entity_spawned": {
+        "sequence": [
+          {
+            "add": {
+              "component_groups": [
+                "temperate_frog"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "any_of": [
+                {
+                  "test": "has_biome_tag",
+                  "value": "desert"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "jungle"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "savanna"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "mesa"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "nether"
+                },
+                {
+                  "all_of": [
+                    {
+                      "test": "has_biome_tag",
+                      "value": "warm"
+                    },
+                    {
+                      "test": "has_biome_tag",
+                      "value": "ocean"
+                    }
+                  ]
+                },
+                {
+                  "all_of": [
+                    {
+                      "test": "has_biome_tag",
+                      "value": "lukewarm"
+                    },
+                    {
+                      "test": "has_biome_tag",
+                      "value": "ocean"
+                    }
+                  ]
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "mangrove_swamp"
+                }
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "warm_frog"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "any_of": [
+                {
+                  "test": "has_biome_tag",
+                  "value": "mountain"
+                },
+                {
+                  "all_of": [
+                    {
+                      "test": "has_biome_tag",
+                      "value": "mountains"
+                    },
+                    {
+                      "test": "has_biome_tag",
+                      "operator": "!=",
+                      "value": "meadow"
+                    },
+                    {
+                      "test": "has_biome_tag",
+                      "operator": "!=",
+                      "value": "cherry_grove"
+                    },
+                    {
+                      "test": "has_biome_tag",
+                      "operator": "!=",
+                      "value": "stony_peaks"
+                    }
+                  ]
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "ice"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "cold"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "frozen"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "the_end"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "deep_dark"
+                }
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "cold_frog"
+              ]
+            }
+          }
+        ]
+      },
+      "spawn_cold": {
+        "add": {
+          "component_groups": [
+            "cold_frog"
+          ]
+        }
+      },
+      "minecraft:entity_transformed": {
+        "sequence": [
+          {
+            "add": {
+              "component_groups": [
+                "temperate_frog"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "any_of": [
+                {
+                  "test": "has_biome_tag",
+                  "value": "desert"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "jungle"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "savanna"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "mesa"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "nether"
+                },
+                {
+                  "all_of": [
+                    {
+                      "test": "has_biome_tag",
+                      "value": "warm"
+                    },
+                    {
+                      "test": "has_biome_tag",
+                      "value": "ocean"
+                    }
+                  ]
+                },
+                {
+                  "all_of": [
+                    {
+                      "test": "has_biome_tag",
+                      "value": "lukewarm"
+                    },
+                    {
+                      "test": "has_biome_tag",
+                      "value": "ocean"
+                    }
+                  ]
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "mangrove_swamp"
+                }
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "warm_frog"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "any_of": [
+                {
+                  "test": "has_biome_tag",
+                  "value": "mountain"
+                },
+                {
+                  "all_of": [
+                    {
+                      "test": "has_biome_tag",
+                      "value": "mountains"
+                    },
+                    {
+                      "test": "has_biome_tag",
+                      "operator": "!=",
+                      "value": "meadow"
+                    },
+                    {
+                      "test": "has_biome_tag",
+                      "operator": "!=",
+                      "value": "cherry_grove"
+                    },
+                    {
+                      "test": "has_biome_tag",
+                      "operator": "!=",
+                      "value": "stony_peaks"
+                    }
+                  ]
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "ice"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "cold"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "frozen"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "the_end"
+                },
+                {
+                  "test": "has_biome_tag",
+                  "value": "deep_dark"
+                }
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "cold_frog"
+              ]
+            }
+          }
+        ]
+      },
+      "craft_royale:remove_teams": {
+        "remove": {
+          "component_groups": []
+        }
+      }
+    }
+  }
+}

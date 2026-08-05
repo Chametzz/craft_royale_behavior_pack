@@ -156,6 +156,7 @@ export class MatchManager {
     if (!this.inProgress) {
       this.players.push(player);
       player.teleport(this.waitingRoom);
+      PlayerManager.lockInventory(player);
 
       if (this.timerUpdaterId) {
         system.clearRun(this.timerUpdaterId);
@@ -180,6 +181,7 @@ export class MatchManager {
       this.players,
       Array.from(this.teamData.values(), (tD, i) => tD.team),
     );
+
     for (const tD of this.teamData.values()) {
       tD.players = this.players.filter(
         (player) => TeamManager.getTeamFromEntity(player) === tD.team,
@@ -251,6 +253,7 @@ export class MatchManager {
           this.clearEntities();
         }
       } else {
+        this.damageBuildings();
         this.updateScoreboard();
         if (this.timer == 60) {
           this.updateElixir(this.elixirMultiplier + 1);
@@ -406,9 +409,10 @@ export class MatchManager {
       e.runCommand("summon fireworks_rocket ~ ~ ~");
     }
 
-    PlayerManager.displayTitle(
-      `${winner.team.color}${winner.team.name} Team has WON!`,
-    );
+    PlayerManager.displayTitle((p) => {
+      p.playSound("horn.call.1");
+      return `${winner.team.color}${winner.team.name} Team has WON!`;
+    });
 
     system.runTimeout(() => {
       this.stop();
@@ -477,6 +481,13 @@ export class MatchManager {
     return teamsLowestHp[0].lowestHp === teamsLowestHp[1].lowestHp;
   }
 
+  damageBuildings() {
+    world
+      .getDimension("overworld")
+      .getEntities({ tags: ["buildings"], excludeFamilies: ["tower"] })
+      .forEach((e) => e.applyDamage(1));
+  }
+
   //send
   /**
    *
@@ -505,6 +516,7 @@ export class MatchManager {
     for (const tD of this.teamData.values()) {
       for (const p of tD.players) {
         PlayerManager.restorePlayer(p);
+        p.addLevels(5);
         p.setSpawnPoint({
           x: tD.spawn.x,
           y: tD.spawn.y,
@@ -527,14 +539,25 @@ export class MatchManager {
   }
 
   displayFight() {
-    PlayerManager.displayTitle((p) => {
-      p.playSound("horn.call.0");
-      return "FIGHT!";
+    PlayerManager.displayTitle("FIGHT!", (p) => {
+      if (this.playerElixirMultipliers.has(p.id)) {
+        return `${TextStyle.LightPurple}x${this.playerElixirMultipliers.get(p.id)} Elixir`;
+      }
+      return undefined;
     });
+    system.runTimeout(() => {
+      for (const tD of this.teamData.values()) {
+        world.getDimension("overworld").playSound("horn.call.0", tD.spawn);
+      }
+    }, 1);
   }
 
   displayCrowns() {
-    PlayerManager.displayTitle(this.crownsLabel);
+    PlayerManager.displayTitle((p) => {
+      p.playSound("note.pling");
+      p.playSound("entity.wither.break_block");
+      return this.crownsLabel;
+    });
   }
 
   display60SecondsLeft() {

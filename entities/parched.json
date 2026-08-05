@@ -2,7 +2,7 @@
   "format_version": "1.26.30",
   "minecraft:entity": {
     "description": {
-      "identifier": "minecraft:skeleton",
+      "identifier": "minecraft:parched",
       "is_summonable": true,
       "is_spawnable": true,
       "spawn_category": "monster",
@@ -20,14 +20,14 @@
     },
     "components": {
       "minecraft:behavior.equip_item": {
-        "priority": 3
+        "priority": 4
       },
       "minecraft:behavior.flee_sun": {
-        "priority": 2,
+        "priority": 3,
         "speed_multiplier": 1
       },
       "minecraft:behavior.look_at_player": {
-        "priority": 7
+        "priority": 8
       },
       "minecraft:behavior.pickup_items": {
         "can_pickup_any_item": true,
@@ -38,22 +38,16 @@
         ],
         "pickup_based_on_chance": true,
         "goal_radius": 2,
-        "priority": 5,
+        "priority": 6,
         "max_dist": 3,
         "speed_multiplier": 1.0
       },
       "minecraft:behavior.random_look_around": {
-        "priority": 8
+        "priority": 9
       },
       "minecraft:behavior.random_stroll": {
-        "priority": 6,
+        "priority": 7,
         "speed_multiplier": 1
-      },
-      "minecraft:behavior.ranged_attack": {
-        "attack_interval_max": 3.0,
-        "attack_interval_min": 3.0,
-        "attack_radius": 15.0,
-        "priority": 0
       },
       "minecraft:breathable": {
         "breathes_water": true,
@@ -77,8 +71,8 @@
         "table": "loot_tables/entities/skeleton_gear.json"
       },
       "minecraft:health": {
-        "max": 20,
-        "value": 20
+        "max": 16,
+        "value": 16
       },
       "minecraft:hurt_on_condition": {
         "damage_conditions": [
@@ -94,7 +88,12 @@
       "minecraft:is_hidden_when_invisible": {},
       "minecraft:jump.static": {},
       "minecraft:loot": {
-        "table": "loot_tables/entities/skeleton.json"
+        "table": "loot_tables/entities/parched.json"
+      },
+      "minecraft:mob_effect_immunity": {
+        "mob_effects": [
+          "weakness"
+        ]
       },
       "minecraft:movement": {
         "value": 0.25
@@ -111,7 +110,6 @@
       "minecraft:physics": {},
       "minecraft:pushable_by_block": {},
       "minecraft:pushable_by_entity": {},
-      "minecraft:rotation_locked_to_vehicle": {},
       "minecraft:shareables": {
         "items": [
           {
@@ -158,7 +156,7 @@
           },
           {
             "item": "minecraft:bow",
-            "priority": 7,
+            "priority": 6,
             "surplus_amount": 1,
             "want_amount": 1
           },
@@ -357,15 +355,13 @@
         ],
         "singular_pickup": true
       },
-      "minecraft:shooter": {
-        "def": "minecraft:arrow"
-      },
       "minecraft:type_family": {
         "family": [
+          "parched",
           "skeleton",
-          "undead",
           "monster",
-          "mob"
+          "mob",
+          "undead"
         ]
       },
       "minecraft:follow_range": {
@@ -626,38 +622,6 @@
       }
     },
     "component_groups": {
-      "become_stray": {
-        "minecraft:transformation": {
-          "drop_inventory": true,
-          "into": "minecraft:stray",
-          "keep_level": true,
-          "preserve_equipment": true,
-          "transformation_sound": "convert_to_stray"
-        }
-      },
-      "got_out_of_powder_snow_environment_sensor": {},
-      "in_powder_snow": {
-        "minecraft:is_shaking": {},
-        "minecraft:timer": {
-          "looping": false,
-          "time": 20,
-          "time_down_event": {
-            "event": "become_stray_event"
-          }
-        }
-      },
-      "minecraft:lightning_immune": {
-        "minecraft:damage_sensor": {
-          "triggers": {
-            "deals_damage": "no",
-            "on_damage": {
-              "filters": {
-                "other_with_families": "lightning"
-              }
-            }
-          }
-        }
-      },
       "minecraft:melee_attack": {
         "minecraft:attack": {
           "damage": 2
@@ -670,80 +634,30 @@
       },
       "minecraft:ranged_attack": {
         "minecraft:behavior.ranged_attack": {
-          "attack_interval_max": 3.0,
-          "attack_interval_min": 3.0,
+          "attack_interval": 3.5,
           "attack_radius": 15.0,
-          "priority": 0
+          "priority": 1
         },
         "minecraft:shooter": {
+          "aux_val": 35,
           "def": "minecraft:arrow",
           "sound": "bow"
         }
       },
       "minecraft:ranged_attack_hard": {
         "minecraft:behavior.ranged_attack": {
-          "attack_interval_max": 2.0,
-          "attack_interval_min": 2.0,
+          "attack_interval": 2.5,
           "attack_radius": 15.0,
-          "priority": 0
+          "priority": 1
         },
         "minecraft:shooter": {
+          "aux_val": 35,
           "def": "minecraft:arrow",
           "sound": "bow"
         }
       }
     },
     "events": {
-      "become_stray_event": {
-        "add": {
-          "component_groups": [
-            "become_stray"
-          ]
-        }
-      },
-      "minecraft:switch_to_hard_ranged": {
-        "add": {
-          "component_groups": [
-            "minecraft:ranged_attack_hard"
-          ]
-        },
-        "remove": {
-          "component_groups": [
-            "minecraft:ranged_attack"
-          ]
-        }
-      },
-      "minecraft:switch_to_normal_ranged": {
-        "add": {
-          "component_groups": [
-            "minecraft:ranged_attack"
-          ]
-        },
-        "remove": {
-          "component_groups": [
-            "minecraft:ranged_attack_hard"
-          ]
-        }
-      },
-      "got_in_powder_snow": {
-        "add": {
-          "component_groups": [
-            "in_powder_snow"
-          ]
-        }
-      },
-      "got_out_of_powder_snow": {
-        "add": {
-          "component_groups": [
-            "got_out_of_powder_snow_environment_sensor"
-          ]
-        },
-        "remove": {
-          "component_groups": [
-            "in_powder_snow"
-          ]
-        }
-      },
       "minecraft:melee_mode": {
         "add": {
           "component_groups": [
@@ -753,8 +667,7 @@
         "remove": {
           "component_groups": [
             "minecraft:ranged_attack",
-            "minecraft:ranged_attack_hard",
-            "got_out_of_powder_snow_environment_sensor"
+            "minecraft:ranged_attack_hard"
           ]
         }
       },
@@ -785,6 +698,30 @@
           }
         ]
       },
+      "minecraft:switch_to_hard_ranged": {
+        "add": {
+          "component_groups": [
+            "minecraft:ranged_attack_hard"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "minecraft:ranged_attack"
+          ]
+        }
+      },
+      "minecraft:switch_to_normal_ranged": {
+        "add": {
+          "component_groups": [
+            "minecraft:ranged_attack"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "minecraft:ranged_attack_hard"
+          ]
+        }
+      },
       "minecraft:ranged_mode": {
         "sequence": [
           {
@@ -800,8 +737,7 @@
             "remove": {
               "component_groups": [
                 "minecraft:melee_attack",
-                "minecraft:ranged_attack",
-                "got_out_of_powder_snow_environment_sensor"
+                "minecraft:ranged_attack"
               ]
             }
           },
@@ -819,19 +755,11 @@
             "remove": {
               "component_groups": [
                 "minecraft:melee_attack",
-                "minecraft:ranged_attack_hard",
-                "got_out_of_powder_snow_environment_sensor"
+                "minecraft:ranged_attack_hard"
               ]
             }
           }
         ]
-      },
-      "minecraft:spring_trap": {
-        "add": {
-          "component_groups": [
-            "minecraft:lightning_immune"
-          ]
-        }
       },
       "craft_royale:remove_teams": {
         "remove": {

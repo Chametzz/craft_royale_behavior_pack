@@ -20,6 +20,7 @@ import { CraftRoyaleCardManager } from "./craft_royale_card_manager.js";
 /**
  * @typedef {Object} TeamData
  * @property {Team} team
+ * @property {{ x: number, y: number, z: number }} lobbySpawn
  * @property {{ x: number, y: number, z: number }} spawn
  * @property { number } direction
  * @property {{ x: number, y: number, z: number }} kingSpawn
@@ -75,6 +76,7 @@ export class MatchManager {
     this.suddenDeathTime = 120;
 
     this.lobbySpawn = data.lobbySpawn;
+    world.setDefaultSpawnLocation(this.lobbySpawn);
     this.kingZoneSize = data.kingZoneSize;
     this.princessZoneSize = data.princessZoneSize;
     this.waitingRoom = data.waitingRoom;
@@ -496,12 +498,6 @@ export class MatchManager {
   sendPlayerToLobby(player) {
     PlayerManager.restorePlayer(player);
     player.removeTag("in_match");
-    player.setSpawnPoint({
-      x: this.lobbySpawn.x,
-      y: this.lobbySpawn.y,
-      z: this.lobbySpawn.z,
-      dimension: player.dimension,
-    });
     player.teleport(this.lobbySpawn);
   }
 

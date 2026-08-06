@@ -1,25 +1,14 @@
 const fs = require("fs");
 const path = require("path");
-const { CraftRoyaleCard } = require("./scripts/classes/craft_royale_card.js");
+const { CraftRoyaleCard } = require("../scripts/classes/craft_royale_card.js");
 
-const outputDirectory = path.join(
-  process.env.APPDATA,
-  "Minecraft Bedrock",
-  "Users",
-  "Shared",
-  "games",
-  "com.mojang",
-  "development_behavior_packs",
-  "craft_royale",
-  "items",
-);
+const outputDirectory = path.join(__dirname, "..", "items");
 
 if (!fs.existsSync(outputDirectory)) {
   fs.mkdirSync(outputDirectory, { recursive: true });
 }
 
 CraftRoyaleCard.values.forEach((item) => {
-  // Estructura oficial del ítem para Minecraft Bedrock (ej. formato 1.20+)
   const jsonContent = {
     format_version: "1.20.50",
     "minecraft:item": {
@@ -41,7 +30,7 @@ CraftRoyaleCard.values.forEach((item) => {
   const filePath = path.join(outputDirectory, fileName);
 
   fs.writeFileSync(filePath, JSON.stringify(jsonContent, null, 2), "utf-8");
-  console.log(`[✔] Generado automáticamente: ${fileName}`);
+  console.log("\x1b[32m%s\x1b[0m", `File generated successfully: ${fileName}`);
 });
 
-console.log("¡Todos los JSON de ítems se han actualizado con éxito!");
+console.log("\x1b[32m%s\x1b[0m", "All JSON files were successfully generated!");

@@ -27,7 +27,7 @@
       },
       "minecraft:behavior.random_stroll": {
         "priority": 4,
-        "speed_multiplier": 1.0
+        "speed_multiplier": 1
       },
       "minecraft:can_climb": {},
       "minecraft:collision_box": {
@@ -40,30 +40,34 @@
           {
             "on_damage": {
               "filters": {
-                "any_of": [
+                "all_of": [
                   {
-                    "all_of": [
+                    "any_of": [
                       {
-                        "test": "has_tag",
-                        "value": "blue_team"
+                        "all_of": [
+                          {
+                            "test": "has_tag",
+                            "value": "blue_team"
+                          },
+                          {
+                            "test": "has_tag",
+                            "subject": "other",
+                            "value": "blue_team"
+                          }
+                        ]
                       },
                       {
-                        "test": "has_tag",
-                        "subject": "other",
-                        "value": "blue_team"
-                      }
-                    ]
-                  },
-                  {
-                    "all_of": [
-                      {
-                        "test": "has_tag",
-                        "value": "red_team"
-                      },
-                      {
-                        "test": "has_tag",
-                        "subject": "other",
-                        "value": "red_team"
+                        "all_of": [
+                          {
+                            "test": "has_tag",
+                            "value": "red_team"
+                          },
+                          {
+                            "test": "has_tag",
+                            "subject": "other",
+                            "value": "red_team"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -107,9 +111,7 @@
         "value": 0.23
       },
       "minecraft:movement.basic": {},
-      "minecraft:nameable": {
-        "always_show": true
-      },
+      "minecraft:nameable": {},
       "minecraft:navigation.walk": {
         "avoid_damage_blocks": true,
         "avoid_water": true,
@@ -147,87 +149,9 @@
             "filters": {
               "all_of": [
                 {
-                  "any_of": [
-                    {
-                      "all_of": [
-                        {
-                          "test": "has_tag",
-                          "value": "win_condition"
-                        },
-                        {
-                          "any_of": [
-                            {
-                              "test": "has_tag",
-                              "subject": "other",
-                              "value": "buildings"
-                            },
-                            {
-                              "test": "is_family",
-                              "subject": "other",
-                              "value": "tower"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "all_of": [
-                        {
-                          "test": "has_tag",
-                          "value": "skiptower"
-                        },
-                        {
-                          "test": "is_family",
-                          "operator": "!=",
-                          "subject": "other",
-                          "value": "tower"
-                        }
-                      ]
-                    },
-                    {
-                      "all_of": [
-                        {
-                          "test": "has_tag",
-                          "operator": "!=",
-                          "value": "win_condition"
-                        },
-                        {
-                          "test": "has_tag",
-                          "operator": "!=",
-                          "value": "skiptower"
-                        },
-                        {
-                          "test": "has_tag",
-                          "value": "anti_air"
-                        },
-                        {
-                          "test": "has_tag",
-                          "subject": "other",
-                          "value": "air"
-                        }
-                      ]
-                    },
-                    {
-                      "all_of": [
-                        {
-                          "test": "has_tag",
-                          "operator": "!=",
-                          "value": "win_condition"
-                        },
-                        {
-                          "test": "has_tag",
-                          "operator": "!=",
-                          "value": "skiptower"
-                        },
-                        {
-                          "test": "has_tag",
-                          "operator": "!=",
-                          "subject": "other",
-                          "value": "air"
-                        }
-                      ]
-                    }
-                  ]
+                  "test": "has_tag",
+                  "subject": "other",
+                  "value": "in_match"
                 },
                 {
                   "any_of": [
@@ -240,12 +164,8 @@
                         {
                           "test": "has_tag",
                           "subject": "other",
-                          "value": "red_team"
-                        },
-                        {
-                          "test": "has_tag",
-                          "subject": "other",
-                          "value": "in_match"
+                          "operator": "!=",
+                          "value": "blue_team"
                         }
                       ]
                     },
@@ -258,12 +178,84 @@
                         {
                           "test": "has_tag",
                           "subject": "other",
-                          "value": "blue_team"
+                          "operator": "!=",
+                          "value": "red_team"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "win_condition"
                         },
                         {
                           "test": "has_tag",
                           "subject": "other",
-                          "value": "in_match"
+                          "value": "buildings"
+                        }
+                      ]
+                    },
+                    {
+                      "test": "has_tag",
+                      "operator": "!=",
+                      "value": "win_condition"
+                    }
+                  ]
+                },
+                {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "skip_tower"
+                        },
+                        {
+                          "test": "is_family",
+                          "subject": "other",
+                          "operator": "!=",
+                          "value": "tower"
+                        }
+                      ]
+                    },
+                    {
+                      "test": "has_tag",
+                      "operator": "!=",
+                      "value": "skip_tower"
+                    }
+                  ]
+                },
+                {
+                  "any_of": [
+                    {
+                      "test": "has_tag",
+                      "subject": "other",
+                      "operator": "!=",
+                      "value": "air"
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "air"
+                        },
+                        {
+                          "any_of": [
+                            {
+                              "test": "has_tag",
+                              "value": "anti_air"
+                            },
+                            {
+                              "test": "has_tag",
+                              "value": "air"
+                            }
+                          ]
                         }
                       ]
                     }
@@ -290,58 +282,49 @@
                 },
                 {
                   "test": "has_tag",
-                  "value": "blue_team"
+                  "subject": "other",
+                  "value": "in_match"
                 },
                 {
                   "test": "is_family",
-                  "operator": "!=",
                   "subject": "other",
+                  "operator": "!=",
                   "value": "tower"
                 },
                 {
-                  "test": "has_tag",
-                  "subject": "other",
-                  "value": "red_team"
-                },
-                {
-                  "test": "has_tag",
-                  "subject": "other",
-                  "value": "in_match"
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "operator": "!=",
+                          "value": "blue_team"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "operator": "!=",
+                          "value": "red_team"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
-            },
-            "max_dist": 16
-          },
-          {
-            "filters": {
-              "all_of": [
-                {
-                  "test": "has_tag",
-                  "value": "coward"
-                },
-                {
-                  "test": "has_tag",
-                  "value": "red_team"
-                },
-                {
-                  "test": "is_family",
-                  "operator": "!=",
-                  "subject": "other",
-                  "value": "tower"
-                },
-                {
-                  "test": "has_tag",
-                  "subject": "other",
-                  "value": "blue_team"
-                },
-                {
-                  "test": "has_tag",
-                  "subject": "other",
-                  "value": "in_match"
-                }
-              ]
-            },
-            "max_dist": 16
+            }
           }
         ]
       }
@@ -361,9 +344,9 @@
             "event": "switch_to_melee",
             "target": "self"
           },
-          "inside_range": 2.0,
+          "inside_range": 2,
           "must_see": true,
-          "outside_range": 3.0,
+          "outside_range": 3,
           "on_outside_range": {
             "event": "switch_to_ranged",
             "target": "self"
@@ -372,14 +355,14 @@
       },
       "ranged_mode": {
         "minecraft:behavior.ranged_attack": {
-          "charge_shoot_trigger": 4.0,
-          "attack_interval_max": 5.0,
-          "attack_interval_min": 3.0,
-          "attack_radius": 48.0,
+          "charge_shoot_trigger": 4,
+          "attack_interval_max": 5,
+          "attack_interval_min": 3,
+          "attack_radius": 48,
           "burst_interval": 0.3,
           "burst_shots": 3,
           "priority": 3,
-          "charge_charged_trigger": 0.0
+          "charge_charged_trigger": 0
         },
         "minecraft:shooter": {
           "def": "minecraft:small_fireball"
@@ -423,11 +406,6 @@
           "component_groups": [
             "melee_mode"
           ]
-        }
-      },
-      "craft_royale:remove_teams": {
-        "remove": {
-          "component_groups": []
         }
       }
     }

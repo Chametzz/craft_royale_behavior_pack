@@ -504,7 +504,7 @@ export class CraftRoyaleCardManager {
 
     frog: (ctx) => {
       const e = ctx.spawnEntity("minecraft:frog");
-      e.addTag("skiptower");
+      e.addTag("skip_tower");
       e.addTag("anti_air");
     },
   };

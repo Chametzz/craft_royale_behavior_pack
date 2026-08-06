@@ -23,11 +23,10 @@ export class SpawnManager {
   }
 
   /**
-   * Dibuja una línea de partículas DESDE start HASTA end
    * @param {Dimension} dimension
-   * @param {{x: number, y: number, z: number}} start - Punto inicial
-   * @param {{x: number, y: number, z: number}} end - Punto final
-   * @param {number} density - Cantidad de partículas a lo largo del trayecto
+   * @param {{x: number, y: number, z: number}} start
+   * @param {{x: number, y: number, z: number}} end
+   * @param {number} density
    * @param {string} particleIdentifier
    * @param {{r: number, g: number, b: number, a?: number}} color
    */
@@ -42,9 +41,8 @@ export class SpawnManager {
     const molangVars = this.#createColorVars(color);
 
     for (let i = 0; i <= density; i++) {
-      const t = i / density; // Factor de interpolación (0.0 a 1.0)
+      const t = i / density;
 
-      // Interpolación lineal (Lerp) de start a end
       const currentLoc = {
         x: start.x + (end.x - start.x) * t,
         y: start.y + (end.y - start.y) * t,
@@ -56,11 +54,10 @@ export class SpawnManager {
   }
 
   /**
-   * Llena de partículas el área (caja) entre dos esquinas A y B
    * @param {Dimension} dimension
-   * @param {{x: number, y: number, z: number}} cornerA - Primera esquina
-   * @param {{x: number, y: number, z: number}} cornerB - Segunda esquina opuesta
-   * @param {number} step - Distancia/separación entre cada partícula
+   * @param {{x: number, y: number, z: number}} cornerA
+   * @param {{x: number, y: number, z: number}} cornerB
+   * @param {number} step
    * @param {string} particleIdentifier
    * @param {{r: number, g: number, b: number, a?: number}} color
    */

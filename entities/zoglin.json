@@ -34,7 +34,7 @@
       },
       "minecraft:behavior.random_stroll": {
         "priority": 7,
-        "speed_multiplier": 1.0
+        "speed_multiplier": 1
       },
       "minecraft:breathable": {
         "breathes_water": true,
@@ -61,9 +61,7 @@
         "value": 0.25
       },
       "minecraft:movement.basic": {},
-      "minecraft:nameable": {
-        "always_show": true
-      },
+      "minecraft:nameable": {},
       "minecraft:navigation.walk": {
         "avoid_damage_blocks": true,
         "avoid_water": true,
@@ -87,49 +85,6 @@
         "value": 128,
         "max": 128
       },
-      "minecraft:damage_sensor": {
-        "triggers": [
-          {
-            "on_damage": {
-              "filters": {
-                "any_of": [
-                  {
-                    "all_of": [
-                      {
-                        "test": "has_tag",
-                        "value": "blue_team"
-                      },
-                      {
-                        "test": "has_tag",
-                        "subject": "other",
-                        "value": "blue_team"
-                      }
-                    ]
-                  },
-                  {
-                    "all_of": [
-                      {
-                        "test": "has_tag",
-                        "value": "red_team"
-                      },
-                      {
-                        "test": "has_tag",
-                        "subject": "other",
-                        "value": "red_team"
-                      }
-                    ]
-                  }
-                ]
-              }
-            },
-            "deals_damage": "no"
-          },
-          {
-            "cause": "fall",
-            "deals_damage": "no"
-          }
-        ]
-      },
       "minecraft:behavior.nearest_attackable_target": {
         "priority": 0,
         "must_see": false,
@@ -141,87 +96,9 @@
             "filters": {
               "all_of": [
                 {
-                  "any_of": [
-                    {
-                      "all_of": [
-                        {
-                          "test": "has_tag",
-                          "value": "win_condition"
-                        },
-                        {
-                          "any_of": [
-                            {
-                              "test": "has_tag",
-                              "subject": "other",
-                              "value": "buildings"
-                            },
-                            {
-                              "test": "is_family",
-                              "subject": "other",
-                              "value": "tower"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "all_of": [
-                        {
-                          "test": "has_tag",
-                          "value": "skiptower"
-                        },
-                        {
-                          "test": "is_family",
-                          "operator": "!=",
-                          "subject": "other",
-                          "value": "tower"
-                        }
-                      ]
-                    },
-                    {
-                      "all_of": [
-                        {
-                          "test": "has_tag",
-                          "operator": "!=",
-                          "value": "win_condition"
-                        },
-                        {
-                          "test": "has_tag",
-                          "operator": "!=",
-                          "value": "skiptower"
-                        },
-                        {
-                          "test": "has_tag",
-                          "value": "anti_air"
-                        },
-                        {
-                          "test": "has_tag",
-                          "subject": "other",
-                          "value": "air"
-                        }
-                      ]
-                    },
-                    {
-                      "all_of": [
-                        {
-                          "test": "has_tag",
-                          "operator": "!=",
-                          "value": "win_condition"
-                        },
-                        {
-                          "test": "has_tag",
-                          "operator": "!=",
-                          "value": "skiptower"
-                        },
-                        {
-                          "test": "has_tag",
-                          "operator": "!=",
-                          "subject": "other",
-                          "value": "air"
-                        }
-                      ]
-                    }
-                  ]
+                  "test": "has_tag",
+                  "subject": "other",
+                  "value": "in_match"
                 },
                 {
                   "any_of": [
@@ -234,12 +111,8 @@
                         {
                           "test": "has_tag",
                           "subject": "other",
-                          "value": "red_team"
-                        },
-                        {
-                          "test": "has_tag",
-                          "subject": "other",
-                          "value": "in_match"
+                          "operator": "!=",
+                          "value": "blue_team"
                         }
                       ]
                     },
@@ -252,12 +125,84 @@
                         {
                           "test": "has_tag",
                           "subject": "other",
-                          "value": "blue_team"
+                          "operator": "!=",
+                          "value": "red_team"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "win_condition"
                         },
                         {
                           "test": "has_tag",
                           "subject": "other",
-                          "value": "in_match"
+                          "value": "buildings"
+                        }
+                      ]
+                    },
+                    {
+                      "test": "has_tag",
+                      "operator": "!=",
+                      "value": "win_condition"
+                    }
+                  ]
+                },
+                {
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "skip_tower"
+                        },
+                        {
+                          "test": "is_family",
+                          "subject": "other",
+                          "operator": "!=",
+                          "value": "tower"
+                        }
+                      ]
+                    },
+                    {
+                      "test": "has_tag",
+                      "operator": "!=",
+                      "value": "skip_tower"
+                    }
+                  ]
+                },
+                {
+                  "any_of": [
+                    {
+                      "test": "has_tag",
+                      "subject": "other",
+                      "operator": "!=",
+                      "value": "air"
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "air"
+                        },
+                        {
+                          "any_of": [
+                            {
+                              "test": "has_tag",
+                              "value": "anti_air"
+                            },
+                            {
+                              "test": "has_tag",
+                              "value": "air"
+                            }
+                          ]
                         }
                       ]
                     }
@@ -266,6 +211,53 @@
               ]
             },
             "max_dist": 128
+          }
+        ]
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "on_damage": {
+              "filters": {
+                "all_of": [
+                  {
+                    "any_of": [
+                      {
+                        "all_of": [
+                          {
+                            "test": "has_tag",
+                            "value": "blue_team"
+                          },
+                          {
+                            "test": "has_tag",
+                            "subject": "other",
+                            "value": "blue_team"
+                          }
+                        ]
+                      },
+                      {
+                        "all_of": [
+                          {
+                            "test": "has_tag",
+                            "value": "red_team"
+                          },
+                          {
+                            "test": "has_tag",
+                            "subject": "other",
+                            "value": "red_team"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "deals_damage": "no"
+          },
+          {
+            "cause": "fall",
+            "deals_damage": "no"
           }
         ]
       },
@@ -284,58 +276,49 @@
                 },
                 {
                   "test": "has_tag",
-                  "value": "blue_team"
+                  "subject": "other",
+                  "value": "in_match"
                 },
                 {
                   "test": "is_family",
-                  "operator": "!=",
                   "subject": "other",
+                  "operator": "!=",
                   "value": "tower"
                 },
                 {
-                  "test": "has_tag",
-                  "subject": "other",
-                  "value": "red_team"
-                },
-                {
-                  "test": "has_tag",
-                  "subject": "other",
-                  "value": "in_match"
+                  "any_of": [
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "blue_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "operator": "!=",
+                          "value": "blue_team"
+                        }
+                      ]
+                    },
+                    {
+                      "all_of": [
+                        {
+                          "test": "has_tag",
+                          "value": "red_team"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "operator": "!=",
+                          "value": "red_team"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
-            },
-            "max_dist": 16
-          },
-          {
-            "filters": {
-              "all_of": [
-                {
-                  "test": "has_tag",
-                  "value": "coward"
-                },
-                {
-                  "test": "has_tag",
-                  "value": "red_team"
-                },
-                {
-                  "test": "is_family",
-                  "operator": "!=",
-                  "subject": "other",
-                  "value": "tower"
-                },
-                {
-                  "test": "has_tag",
-                  "subject": "other",
-                  "value": "blue_team"
-                },
-                {
-                  "test": "has_tag",
-                  "subject": "other",
-                  "value": "in_match"
-                }
-              ]
-            },
-            "max_dist": 16
+            }
           }
         ]
       }
@@ -364,7 +347,7 @@
                 1,
                 0
               ],
-              "width": 2.0
+              "width": 2
             }
           ]
         },
@@ -396,7 +379,7 @@
                 0.5,
                 0
               ],
-              "width": 1.0
+              "width": 1
             }
           ]
         },
@@ -495,11 +478,6 @@
             }
           }
         ]
-      },
-      "craft_royale:remove_teams": {
-        "remove": {
-          "component_groups": []
-        }
       }
     }
   }

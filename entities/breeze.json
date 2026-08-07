@@ -11,7 +11,7 @@
           "default": false,
           "type": "bool"
         },
-        "craft_royale:team": {
+        "mob_royale:team": {
           "type": "int",
           "default": 0,
           "client_sync": true,

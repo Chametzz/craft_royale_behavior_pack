@@ -6,7 +6,7 @@
       "is_summonable": true,
       "is_spawnable": false,
       "properties": {
-        "craft_royale:team": {
+        "mob_royale:team": {
           "type": "int",
           "default": 0,
           "client_sync": true,

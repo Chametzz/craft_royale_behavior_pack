@@ -9,10 +9,10 @@ const RP_DIRECTORY = path.join(
   "..",
   "..",
   "development_resource_packs",
-  "craft_royale",
+  "mob_royale",
 );
 
-const OUTPUT_NAME = "craft_royale";
+const OUTPUT_NAME = "mob_royale";
 const OUTPUT_DIRECTORY = path.join(__dirname, "..", "build");
 
 const BP_ALLOWED = ["entities", "items", "scripts", "manifest.json"];

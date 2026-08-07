@@ -225,7 +225,7 @@ const COMPONENTS_TO_ADD = {
 };
 
 const PROPERTIES_TO_ADD = {
-  "craft_royale:team": {
+  "mob_royale:team": {
     type: "int",
     default: 0,
     client_sync: true,

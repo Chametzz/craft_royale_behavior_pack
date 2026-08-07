@@ -1,15 +1,15 @@
 {
   "format_version": 2,
   "header": {
-    "description": "Clash Royale in Minecraft",
-    "name": "Craft Royale",
+    "description": "Clash Royale with Minecraft Mobs",
+    "name": "Mob Royale",
     "uuid": "48ee0fa5-d2ea-4a29-8aa3-543c239033e9",
     "version": [1, 0, 0],
     "min_engine_version": [1, 26, 1]
   },
   "modules": [
     {
-      "description": "Craft Royale Behavior",
+      "description": "Mob Royale Behavior",
       "type": "data",
       "uuid": "aac29e9b-1049-470a-b209-675c91418b78",
       "version": [1, 0, 0]

@@ -1,198 +1,198 @@
-export class CraftRoyaleCard {
-  static prefix = "craft_royale_card:";
+export class MobRoyaleCard {
+  static prefix = "mob_royale_card:";
   static suffix = "_card";
 
-  static zombie = new CraftRoyaleCard({
+  static zombie = new MobRoyaleCard({
     key: "zombie",
     cost: 2,
     name: "Zombies",
   });
-  static skeleton = new CraftRoyaleCard({
+  static skeleton = new MobRoyaleCard({
     key: "skeleton",
     cost: 3,
     name: "Skeletons",
   });
-  static creeper = new CraftRoyaleCard({
+  static creeper = new MobRoyaleCard({
     key: "creeper",
     cost: 1,
     name: "Creeper",
   });
-  static ironGolem = new CraftRoyaleCard({
+  static ironGolem = new MobRoyaleCard({
     key: "iron_golem",
     cost: 7,
     name: "Iron Golem",
   });
-  static spider = new CraftRoyaleCard({
+  static spider = new MobRoyaleCard({
     key: "spider",
     cost: 3,
     name: "Spiders",
   });
-  static enderman = new CraftRoyaleCard({
+  static enderman = new MobRoyaleCard({
     key: "enderman",
     cost: 4,
     name: "Enderman",
   });
-  static silverfish = new CraftRoyaleCard({
+  static silverfish = new MobRoyaleCard({
     key: "silverfish",
     cost: 3,
     name: "Silverfishes",
   });
-  static snowGolem = new CraftRoyaleCard({
+  static snowGolem = new MobRoyaleCard({
     key: "snow_golem",
     cost: 1,
     name: "Snow Golems",
   });
-  static witch = new CraftRoyaleCard({
+  static witch = new MobRoyaleCard({
     key: "witch",
     cost: 3,
     name: "Witch",
   });
-  static lightningBolt = new CraftRoyaleCard({
+  static lightningBolt = new MobRoyaleCard({
     key: "lightning_bolt",
     cost: 2,
     name: "Lightning Bolt",
     enemySide: true,
   });
-  static arrow = new CraftRoyaleCard({
+  static arrow = new MobRoyaleCard({
     key: "arrow",
     cost: 3,
     name: "Arrows",
     enemySide: true,
   });
-  static arrow = new CraftRoyaleCard({
+  static arrow = new MobRoyaleCard({
     key: "arrow",
     cost: 3,
     name: "Arrows",
     enemySide: true,
   });
-  static vex = new CraftRoyaleCard({
+  static vex = new MobRoyaleCard({
     key: "vex",
     cost: 2,
     name: "Vex",
   });
-  static endermite = new CraftRoyaleCard({
+  static endermite = new MobRoyaleCard({
     key: "endermite",
     cost: 1,
     name: "Endermites",
   });
-  static endermite = new CraftRoyaleCard({
+  static endermite = new MobRoyaleCard({
     key: "endermite",
     cost: 1,
     name: "Endermites",
   });
-  static ghast = new CraftRoyaleCard({
+  static ghast = new MobRoyaleCard({
     key: "ghast",
     cost: 3,
     name: "Ghast",
   });
-  static ravager = new CraftRoyaleCard({
+  static ravager = new MobRoyaleCard({
     key: "ravager",
     cost: 7,
     name: "Ravager",
   });
-  static pillager = new CraftRoyaleCard({
+  static pillager = new MobRoyaleCard({
     key: "pillager",
     cost: 5,
     name: "Pillagers",
   });
-  static evoker = new CraftRoyaleCard({
+  static evoker = new MobRoyaleCard({
     key: "evoker",
     cost: 3,
     name: "Evoker",
   });
-  static vindicator = new CraftRoyaleCard({
+  static vindicator = new MobRoyaleCard({
     key: "vindicator",
     cost: 4,
     name: "Vindicator",
   });
-  static piglin = new CraftRoyaleCard({
+  static piglin = new MobRoyaleCard({
     key: "piglin",
     cost: 3,
     name: "Piglins",
   });
-  static piglinBrute = new CraftRoyaleCard({
+  static piglinBrute = new MobRoyaleCard({
     key: "piglin_brute",
     cost: 6,
     name: "Piglin Brutes",
   });
-  static witherSkeleton = new CraftRoyaleCard({
+  static witherSkeleton = new MobRoyaleCard({
     key: "wither_skeleton",
     cost: 3,
     name: "Wither Skeleton",
   });
-  static blaze = new CraftRoyaleCard({
+  static blaze = new MobRoyaleCard({
     key: "blaze",
     cost: 2,
     name: "Blazes",
   });
-  static zombifiedPiglin = new CraftRoyaleCard({
+  static zombifiedPiglin = new MobRoyaleCard({
     key: "zombified_piglin",
     cost: 5,
     name: "Zombified Piglins",
   });
-  static hoglin = new CraftRoyaleCard({
+  static hoglin = new MobRoyaleCard({
     key: "hoglin",
     cost: 4,
     name: "Hoglin",
   });
-  static zoglin = new CraftRoyaleCard({
+  static zoglin = new MobRoyaleCard({
     key: "zoglin",
     cost: 3,
     name: "Zoglin",
   });
-  static shulker = new CraftRoyaleCard({
+  static shulker = new MobRoyaleCard({
     key: "shulker",
     cost: 4,
     name: "Shulker",
   });
-  static drowned = new CraftRoyaleCard({
+  static drowned = new MobRoyaleCard({
     key: "drowned",
     cost: 3,
     name: "Drowned",
   });
-  static wolf = new CraftRoyaleCard({
+  static wolf = new MobRoyaleCard({
     key: "wolf",
     cost: 7,
     name: "Wolfs",
   });
-  static breeze = new CraftRoyaleCard({
+  static breeze = new MobRoyaleCard({
     key: "breeze",
     cost: 2,
     name: "Breezes",
   });
-  static phantom = new CraftRoyaleCard({
+  static phantom = new MobRoyaleCard({
     key: "phantom",
     cost: 2,
     name: "Phantoms",
   });
-  static bee = new CraftRoyaleCard({
+  static bee = new MobRoyaleCard({
     key: "bee",
     cost: 2,
     name: "Bees",
   });
-  static goat = new CraftRoyaleCard({
+  static goat = new MobRoyaleCard({
     key: "goat",
     cost: 1,
     name: "Goats",
   });
-  static kaboom = new CraftRoyaleCard({
+  static kaboom = new MobRoyaleCard({
     key: "kaboom",
     cost: 4,
     name: "Kaboom",
     enemySide: true,
   });
-  static poison = new CraftRoyaleCard({
+  static poison = new MobRoyaleCard({
     key: "poison",
     cost: 4,
     name: "Poison",
     enemySide: true,
   });
-  static camelHusk = new CraftRoyaleCard({
+  static camelHusk = new MobRoyaleCard({
     key: "camel_husk",
     cost: 4,
     name: "Camel Husk",
   });
-  static frog = new CraftRoyaleCard({
+  static frog = new MobRoyaleCard({
     key: "frog",
     cost: 1,
     name: "Frog",
@@ -201,7 +201,7 @@ export class CraftRoyaleCard {
   /**
    *
    * @param {string} itemId
-   * @returns {CraftRoyaleCard | undefined}
+   * @returns {MobRoyaleCard | undefined}
    */
   static getFromItemId(itemId) {
     for (const c of this.values) {
@@ -212,7 +212,7 @@ export class CraftRoyaleCard {
     return undefined;
   }
 
-  /**@returns {CraftRoyaleCard[]} */
+  /**@returns {MobRoyaleCard[]} */
   static get values() {
     return [
       this.zombie,
@@ -254,7 +254,7 @@ export class CraftRoyaleCard {
   }
 
   get itemId() {
-    return `${CraftRoyaleCard.prefix}${this.key}${CraftRoyaleCard.suffix}`;
+    return `${MobRoyaleCard.prefix}${this.key}${MobRoyaleCard.suffix}`;
   }
 
   get itemName() {
@@ -277,7 +277,7 @@ export class CraftRoyaleCard {
     /** @type {string} */
     this.name = name;
     /** @type {string} */
-    this.icon = icon ? icon : `${key}${CraftRoyaleCard.suffix}`;
+    this.icon = icon ? icon : `${key}${MobRoyaleCard.suffix}`;
     /** @type {boolean} */
     this.enemySide = enemySide;
   }

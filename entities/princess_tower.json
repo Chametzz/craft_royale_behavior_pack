@@ -2,12 +2,12 @@
   "format_version": "1.26.0",
   "minecraft:entity": {
     "description": {
-      "identifier": "craft_royale:princess_tower",
+      "identifier": "mob_royale:princess_tower",
       "spawn_category": "misc",
       "is_spawnable": true,
       "is_summonable": true,
       "properties": {
-        "craft_royale:team": {
+        "mob_royale:team": {
           "type": "int",
           "default": 0,
           "client_sync": true,

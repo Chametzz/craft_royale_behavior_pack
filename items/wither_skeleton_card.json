@@ -2,7 +2,7 @@
   "format_version": "1.20.50",
   "minecraft:item": {
     "description": {
-      "identifier": "craft_royale_card:wither_skeleton_card",
+      "identifier": "mob_royale_card:wither_skeleton_card",
       "category": "equipment"
     },
     "components": {

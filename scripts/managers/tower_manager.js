@@ -25,10 +25,10 @@ export class TowerManager {
     let identifier;
     switch (towerType) {
       case "king":
-        identifier = "craft_royale:king_tower";
+        identifier = "mob_royale:king_tower";
         break;
       case "princess":
-        identifier = "craft_royale:princess_tower";
+        identifier = "mob_royale:princess_tower";
         break;
       default:
         return;
@@ -41,7 +41,7 @@ export class TowerManager {
     tower.addTag("buildings");
     tower.addTag("anti_air");
     tower.addTag("tower");
-    tower.setProperty("craft_royale:team", team.variant);
+    tower.setProperty("mob_royale:team", team.variant);
     tower.setDynamicProperty("zone_size_x", zoneSize.x);
     tower.setDynamicProperty("zone_size_z", zoneSize.z);
     return tower;

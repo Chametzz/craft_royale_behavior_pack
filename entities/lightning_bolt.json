@@ -8,7 +8,7 @@
       "is_spawnable": false,
       "spawn_category": "misc",
       "properties": {
-        "craft_royale:team": {
+        "mob_royale:team": {
           "type": "int",
           "default": 0,
           "client_sync": true,

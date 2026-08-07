@@ -8,7 +8,7 @@ import { keysToCamelCase } from "../utils/keys_to_camel_case.js";
 import { TowerManager } from "./tower_manager.js";
 import { ScoreboardManager } from "./scoreboard_manager.js";
 import { removeFirst } from "../utils/remove_first.js";
-import { CraftRoyaleCardManager } from "./craft_royale_card_manager.js";
+import { MobRoyaleCardManager } from "./mob_royale_card_manager.js";
 
 /**
  * @typedef {Object} MatchManagerConstructor
@@ -120,8 +120,8 @@ export class MatchManager {
     this.tiebreakerUpdaterId = undefined;
     this.towerDieEvent = (event) => {
       if (
-        event.deadEntity.typeId == "craft_royale:princess_tower" ||
-        event.deadEntity.typeId == "craft_royale:king_tower"
+        event.deadEntity.typeId == "mob_royale:princess_tower" ||
+        event.deadEntity.typeId == "mob_royale:king_tower"
       ) {
         this.onTowerDie(event.deadEntity);
       }
@@ -313,7 +313,7 @@ export class MatchManager {
 
   stop() {
     try {
-      ScoreboardManager.remove("craft_royale_scoreboard");
+      ScoreboardManager.remove("mob_royale_scoreboard");
     } catch (error) {}
     this.clearEvents();
     this.sendPlayersToLobby();
@@ -377,7 +377,7 @@ export class MatchManager {
       this.displayCrowns();
 
       // Si se muere el rey se mueren las demás torres y el equipo pierde
-      if (tower.typeId == "craft_royale:king_tower") {
+      if (tower.typeId == "mob_royale:king_tower") {
         for (const t of tD.towers) {
           if (t.isValid) {
             t.kill();
@@ -504,7 +504,7 @@ export class MatchManager {
   sendPlayersToLobby() {
     for (const p of world.getPlayers()) {
       this.sendPlayerToLobby(p);
-      CraftRoyaleCardManager.clearDecks();
+      MobRoyaleCardManager.clearDecks();
     }
   }
 
@@ -521,7 +521,7 @@ export class MatchManager {
         });
         p.teleport(tD.spawn, { rotation: { x: 0, y: tD.direction } });
         p.addTag("in_match");
-        CraftRoyaleCardManager.addDeck(p);
+        MobRoyaleCardManager.addDeck(p);
       }
     }
   }
@@ -589,13 +589,13 @@ export class MatchManager {
 
   displayScoreboard() {
     ScoreboardManager.display(
-      "craft_royale_scoreboard",
-      `${TextStyle.Bold}${TextStyle.White}<< Craft ${TextStyle.Yellow}Royale >>`,
+      "mob_royale_scoreboard",
+      `${TextStyle.Bold}${TextStyle.White}<< Mob ${TextStyle.Yellow}Royale >>`,
       this.scoreboard,
     );
   }
 
   updateScoreboard() {
-    ScoreboardManager.update("craft_royale_scoreboard", this.scoreboard);
+    ScoreboardManager.update("mob_royale_scoreboard", this.scoreboard);
   }
 }

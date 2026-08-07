@@ -7,7 +7,7 @@
       "is_spawnable": true,
       "spawn_category": "monster",
       "properties": {
-        "craft_royale:team": {
+        "mob_royale:team": {
           "type": "int",
           "default": 0,
           "client_sync": true,

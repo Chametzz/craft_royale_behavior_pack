@@ -9,7 +9,7 @@ import {
   system,
   world,
 } from "@minecraft/server";
-import { CraftRoyaleCard } from "../classes/craft_royale_card.js";
+import { MobRoyaleCard, MobRoyaleCard } from "../classes/mob_royale_card.js";
 import { Team } from "../classes/team.js";
 import { TowerManager } from "./tower_manager.js";
 import { TeamManager } from "./team_manager.js";
@@ -40,7 +40,7 @@ import { runIntervalFor } from "../utils/run_interval_for.js";
  * @property {number} ticks
  */
 
-export class CraftRoyaleCardManager {
+export class MobRoyaleCardManager {
   /**@type {Object<string, (ctx: CardInvokeContext) => void>} */
   static cardInvokes = {
     // Zombies
@@ -524,7 +524,7 @@ export class CraftRoyaleCardManager {
    * @param {Team | undefined} team
    */
   static invoke(itemId, player, team = undefined) {
-    const card = CraftRoyaleCard.getFromItemId(itemId);
+    const card = MobRoyaleCard.getFromItemId(itemId);
     if (!card) return;
 
     const cardInvoke = this.cardInvokes[card.key];
@@ -709,14 +709,14 @@ export class CraftRoyaleCardManager {
 
     for (let i = 0; i < inventory.size; i++) {
       const item = inventory.getItem(i);
-      if (item && item.typeId.startsWith(CraftRoyaleCard.prefix)) {
+      if (item && item.typeId.startsWith(MobRoyaleCard.prefix)) {
         if (cards.size >= this.deckSize) break;
         cards.add(item.typeId);
       }
     }
 
     if (cards.size < this.deckSize) {
-      const cardsAvailable = CraftRoyaleCard.values.filter(
+      const cardsAvailable = MobRoyaleCard.values.filter(
         (c) => !cards.has(c.itemId),
       );
       while (cards.size < this.deckSize && cardsAvailable.length > 0) {
@@ -751,7 +751,7 @@ export class CraftRoyaleCardManager {
         const inventory = player.getComponent("minecraft:inventory")?.container;
         for (let i = 0; i < inventory.size; i++) {
           const item = inventory.getItem(i);
-          if (item && item.typeId.startsWith("craft_royale_card:")) {
+          if (item && item.typeId.startsWith(MobRoyaleCard.prefix)) {
             this.decks.get(k).push(item.typeId);
           }
         }

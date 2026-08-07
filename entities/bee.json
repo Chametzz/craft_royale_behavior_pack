@@ -12,7 +12,7 @@
           "client_sync": true,
           "default": "query.had_component_group('has_nectar')"
         },
-        "craft_royale:team": {
+        "mob_royale:team": {
           "type": "int",
           "default": 0,
           "client_sync": true,

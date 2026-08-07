@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { CraftRoyaleCard } = require("../scripts/classes/craft_royale_card.js");
+const { MobRoyaleCard } = require("../scripts/classes/mob_royale_card.js");
 
 const outputDirectory = path.join(__dirname, "..", "items");
 
@@ -8,7 +8,7 @@ if (!fs.existsSync(outputDirectory)) {
   fs.mkdirSync(outputDirectory, { recursive: true });
 }
 
-CraftRoyaleCard.values.forEach((item) => {
+MobRoyaleCard.values.forEach((item) => {
   const jsonContent = {
     format_version: "1.20.50",
     "minecraft:item": {

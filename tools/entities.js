@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 const { Team } = require("../scripts/classes/team.js");
-const { json } = require("stream/consumers");
 
 const INPUT_DIRECTORY = path.join(__dirname, "..", "samples", "entities");
 const OUTPUT_DIRECTORY = path.join(__dirname, "..", "entities");
@@ -268,7 +267,7 @@ function configProperties(description) {
 
 function execute() {
   if (!fs.existsSync(INPUT_DIRECTORY)) {
-    console.log("No existe la carpeta de origen");
+    console.log("The input directory does not exist.");
     return;
   }
 

@@ -439,7 +439,9 @@ export class CraftRoyaleCardManager {
           }
           const strength = 0.4;
           const force = 3;
-          e.applyKnockback({ x: dirX * force, z: dirZ * force }, strength);
+          try {
+            e.applyKnockback({ x: dirX * force, z: dirZ * force }, strength);
+          } catch (error) {}
         },
         color: {
           r: 0.89,

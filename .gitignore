@@ -18,3 +18,4 @@ desktop.ini
 development_behavior_packs/
 
 node_modules/
+build/

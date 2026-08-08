@@ -130,7 +130,9 @@
       },
       "minecraft:movement.basic": {},
       "minecraft:jump.static": {},
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:offspring": {
         "offspring_pairs": {
           "minecraft:skeleton_horse": "minecraft:skeleton_horse"

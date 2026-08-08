@@ -104,7 +104,9 @@
         "value": 0.23
       },
       "minecraft:movement.generic": {},
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:navigation.generic": {
         "avoid_sun": true,
         "can_break_doors": true,

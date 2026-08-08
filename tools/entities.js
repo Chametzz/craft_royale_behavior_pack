@@ -45,6 +45,9 @@ const COMPONENTS_TO_REPLACE = {
 
 const COMPONENTS_TO_ADD = {
   all: {
+    "minecraft:nameable": {
+      always_show: true,
+    },
     "minecraft:follow_range": { value: 128, max: 128 },
     "minecraft:behavior.nearest_attackable_target": {
       priority: 0,

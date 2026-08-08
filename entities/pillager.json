@@ -96,7 +96,9 @@
         "value": 0.35
       },
       "minecraft:movement.basic": {},
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:navigation.walk": {
         "can_path_over_water": true,
         "using_door_annotation": true

@@ -190,7 +190,9 @@
         "value": 0.1
       },
       "minecraft:movement.amphibious": {},
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:navigation.generic": {
         "avoid_damage_blocks": true,
         "can_path_over_water": true,

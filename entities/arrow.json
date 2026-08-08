@@ -80,6 +80,9 @@
         "is_pushable": false,
         "is_pushable_by_piston": true
       },
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:follow_range": {
         "value": 128,
         "max": 128

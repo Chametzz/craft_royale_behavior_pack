@@ -75,6 +75,9 @@
           "wind_charge_projectile"
         ]
       },
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:follow_range": {
         "value": 128,
         "max": 128

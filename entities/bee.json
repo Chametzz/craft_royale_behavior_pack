@@ -630,7 +630,9 @@
         "value": 10,
         "max": 10
       },
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:block_sensor": {
         "sensor_radius": 16,
         "sources": [

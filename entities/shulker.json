@@ -539,7 +539,9 @@
         "value": 0
       },
       "minecraft:movement.basic": {},
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:navigation.walk": {
         "using_door_annotation": true
       },

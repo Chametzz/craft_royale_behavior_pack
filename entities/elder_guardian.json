@@ -89,7 +89,9 @@
         "value": 0.3
       },
       "minecraft:movement.sway": {},
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:navigation.generic": {
         "can_breach": true,
         "can_walk": false,

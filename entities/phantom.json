@@ -84,7 +84,9 @@
         "speed_when_turning": 0.2,
         "start_speed": 0.1
       },
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:physics": {
         "has_gravity": false
       },

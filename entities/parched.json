@@ -99,7 +99,9 @@
         "value": 0.25
       },
       "minecraft:movement.basic": {},
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:navigation.walk": {
         "avoid_sun": true,
         "is_amphibious": true,

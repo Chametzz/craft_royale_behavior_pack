@@ -101,7 +101,9 @@
       "minecraft:is_hidden_when_invisible": {},
       "minecraft:jump.static": {},
       "minecraft:movement.basic": {},
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:navigation.walk": {
         "can_break_doors": true,
         "is_amphibious": true,

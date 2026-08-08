@@ -108,7 +108,9 @@
         "table": "loot_tables/entities/zombie.json"
       },
       "minecraft:movement.basic": {},
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:navigation.walk": {
         "avoid_portals": false,
         "can_break_doors": true,

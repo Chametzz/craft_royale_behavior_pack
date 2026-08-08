@@ -80,24 +80,7 @@
         "width": 4
       },
       "minecraft:nameable": {
-        "default_trigger": {
-          "event": "craft_royale:remove_teams",
-          "target": "self"
-        },
-        "name_actions": [
-          {
-            "name_filter": "blue",
-            "on_named": {
-              "event": "craft_royale:add_blue_team"
-            }
-          },
-          {
-            "name_filter": "red",
-            "on_named": {
-              "event": "craft_royale:add_red_team"
-            }
-          }
-        ]
+        "always_show": true
       },
       "minecraft:persistent": {},
       "minecraft:physics": {},

@@ -193,7 +193,9 @@
         "value": 0.2
       },
       "minecraft:movement.basic": {},
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:navigation.walk": {
         "avoid_water": true
       },

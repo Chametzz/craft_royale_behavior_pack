@@ -207,7 +207,9 @@
         "value": 0.25
       },
       "minecraft:movement.basic": {},
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:navigation.walk": {
         "avoid_damage_blocks": true,
         "avoid_water": true,

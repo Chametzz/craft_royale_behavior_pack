@@ -9,7 +9,7 @@ import {
   system,
   world,
 } from "@minecraft/server";
-import { MobRoyaleCard, MobRoyaleCard } from "../classes/mob_royale_card.js";
+import { MobRoyaleCard } from "../classes/mob_royale_card.js";
 import { Team } from "../classes/team.js";
 import { TowerManager } from "./tower_manager.js";
 import { TeamManager } from "./team_manager.js";

@@ -241,7 +241,9 @@
         "value": 0.4
       },
       "minecraft:movement.basic": {},
-      "minecraft:nameable": {},
+      "minecraft:nameable": {
+        "always_show": true
+      },
       "minecraft:navigation.walk": {
         "blocks_to_avoid": [
           {

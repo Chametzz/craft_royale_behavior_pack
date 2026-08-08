@@ -94,19 +94,7 @@
       },
       "minecraft:movement.basic": {},
       "minecraft:nameable": {
-        "default_trigger": {
-          "event": "minecraft:stop_johnny",
-          "target": "self"
-        },
-        "name_actions": [
-          {
-            "name_filter": "Johnny",
-            "on_named": {
-              "event": "minecraft:start_johnny",
-              "target": "self"
-            }
-          }
-        ]
+        "always_show": true
       },
       "minecraft:navigation.walk": {
         "can_path_over_water": true,
